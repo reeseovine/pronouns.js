@@ -1,6 +1,6 @@
-# pronoun.is
+# pronoun.js
 
-[pronoun.is](https://pronoun.is) is a website for personal pronoun usage examples
+fork of [pronoun.is](https://github.com/witch-house/pronoun.is) that will eventually be translated to javascript as a personal pronoun helper module.
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
@@ -42,25 +42,15 @@ pull request (see the next section for details)
 
 ### The database
 
-The pronouns "database" is a tab-delimited file located in [resources/pronouns.tab][pronoun-database] with fields and example values as follows:
+The pronouns "database" is an array of arrays meant to represent a table, located in [resources/pronouns.json][pronoun-database], with fields and example values as follows:
 
 subject|object|possessive-determiner|possessive-pronoun|reflexive
 -------|------|---------------------|------------------|---------
 they   | them | their               | theirs           | themselves
 
-The top 6 pronouns are displayed on the front page. Please don't edit these
-without talking to me, they've been hand-curated based on usage frequency.
-Below the top 6, the remaining pronouns are sorted in alphabetical order by
-subject and then in roughly frequency order for sets that have the same subject
-pronoun. If you're adding a set that shares the same object pronoun as other
-set(s) already in the database, please insert it immediately below those ones.
+If you have suggestions or changes, please submit an issue or pull request with the [original repository](https://github.com/witch-house/pronoun.is) and published changes will be updated here by hand.
 
-If you edit the database with a text editor, make sure your editor inputs real
-tab characters in that file (a thing your editor might normally be configured 
-not to do!) In Emacs, you can input real tabs by doing Ctrl+q <tab>. 
-In Vi you can use Ctrl+v <tab>.
-
-[pronoun-database]: resources/pronouns.tab
+[pronoun-database]: resources/pronouns.json
 
 ### The code
 
@@ -101,7 +91,7 @@ on your own computer by running the following command:
 $ lein ring server
 ```
 
-This will launch a server running the app and open your default web browser to 
+This will launch a server running the app and open your default web browser to
 the index page. The server will automatically reload files as you edit them -
 with the unfortunate exception of `pronouns.tab`, which is loaded as a resource
 and requires an app restart to reload.
@@ -113,7 +103,7 @@ branches but that's proven to be more trouble than it's worth. Going
 forward we'll be doing all development in feature branches off of `master`,
 and PRs should be issued against `master`.
 
-Please follow [this guide](https://chris.beams.io/posts/git-commit/) 
+Please follow [this guide](https://chris.beams.io/posts/git-commit/)
 for writing good commit messages :)
 
 ## Philosophy on pronoun inclusion
@@ -134,7 +124,7 @@ idea of patching the pronoun.is codebase to support rending pages in different
 languages as long as it doesn't make the code substantially more complicated.
 
 Even if we add I18N support to the code, other language versions of the site
-should have their own domains names (ideally with clever TLD puns like 
+should have their own domains names (ideally with clever TLD puns like
 pronoun.is has for english!)
 
 (This was discussed in issues #13, #14, and #66)
@@ -175,4 +165,3 @@ GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>
-

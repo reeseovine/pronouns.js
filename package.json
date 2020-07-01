@@ -1,0 +1,30 @@
+{
+  "name": "pronoun",
+  "version": "0.0.0",
+  "description": "personal pronoun helper",
+  "main": "src/index.js",
+  "private": "true",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/katacarbix/pronoun.js"
+  },
+  "keywords": [
+    "pronoun",
+    "pronouns",
+    "english",
+    "gender",
+    "nonbinary",
+    "non-binary",
+    "trans",
+    "transgender"
+  ],
+  "author": "Reese Jacobson <me@katacarbix.xyz>",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/katacarbix/pronoun.js/issues"
+  },
+  "homepage": "https://github.com/katacarbix/pronoun.js#readme"
+}
