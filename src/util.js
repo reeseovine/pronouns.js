@@ -20,6 +20,10 @@ module.exports = class Util {
 		return tableFrontFilter(q, table)[0];
 	}
 	
+	expandString(str, table){
+		str.split(' or ').map(p => p.split('/')).map(p => tableLookup(p, table));
+	}
+	
 	
 	// Compute the shortest (in number of path elements) forward path which
     // unambiguously refers to a specific <row> in a <table>. The behavior of

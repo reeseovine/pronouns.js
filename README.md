@@ -48,7 +48,7 @@ subject|object|possessive-determiner|possessive-pronoun|reflexive
 -------|------|---------------------|------------------|---------
 they   | them | their               | theirs           | themselves
 
-If you have suggestions or changes to this, please submit an issue or pull request with the [original repository](https://github.com/witch-house/pronoun.is) and published changes will be updated here by hand.
+If you have suggestions or changes to the database, please submit an issue or pull request with the [original repository](https://github.com/witch-house/pronoun.is) and published changes will be updated here by hand.
 
 [pronoun-database]: resources/pronouns.json
 

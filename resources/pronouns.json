@@ -1,7 +1,7 @@
 [
 	["she", "her", "her", "hers", "herself"],
 	["he", "him", "his", "his", "himself"],
-	["they", "them", "their", "theirs", "themselves"],
+	["they", "them", "their", "theirs", "themself"],
 	["ze", "hir", "hir", "hirs", "hirself"],
 	["ze", "zir", "zir", "zirs", "zirself"],
 	["xey", "xem", "xyr", "xyrs", "xemself"],
@@ -21,7 +21,7 @@
 	["se", "sim", "ser", "sers", "serself"],
 	["shi", "hir", "hir", "hirs", "hirself"],
 	["si", "hyr", "hyr", "hyrs", "hyrself"],
-	["they", "them", "their", "theirs", "themself"],
+	["they", "them", "their", "theirs", "themselves"],
 	["thon", "thon", "thons", "thons", "thonself"],
 	["ve", "ver", "vis", "vis", "verself"],
 	["ve", "vem", "vir", "virs", "vemself"],
