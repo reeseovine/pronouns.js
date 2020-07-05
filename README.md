@@ -1,6 +1,6 @@
 # pronoun.js
 
-fork of [pronoun.is](https://github.com/witch-house/pronoun.is) that will eventually be translated to javascript as a personal pronoun helper module.
+fork of [pronoun.is](https://github.com/witch-house/pronoun.is) which will eventually be translated to javascript as a personal pronoun helper module.
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
@@ -48,7 +48,7 @@ subject|object|possessive-determiner|possessive-pronoun|reflexive
 -------|------|---------------------|------------------|---------
 they   | them | their               | theirs           | themselves
 
-If you have suggestions or changes, please submit an issue or pull request with the [original repository](https://github.com/witch-house/pronoun.is) and published changes will be updated here by hand.
+If you have suggestions or changes to this, please submit an issue or pull request with the [original repository](https://github.com/witch-house/pronoun.is) and published changes will be updated here by hand.
 
 [pronoun-database]: resources/pronouns.json
 
