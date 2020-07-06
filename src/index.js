@@ -1,9 +1,14 @@
+const util = require('./util');
+const list = require('../resources/pronouns.json');
+
 module.exports = class Pronoun {
-	const util = require('./util');
-	const list = require('../resources/pronouns.json');
+	// util = util;
+	// list = list;
 	
-	constructor(shortString){
-		this.pronouns = expandString(shortString);
+	constructor(input){
+		if (typeof input === "string") this.pronouns = util.expandString(input, list);
+		else if (Array.isArr(input)) this.pronouns = input.map(p => util.sanitizeSet(p, list));
+		// else if () this.pronouns = input.pronouns; // if passed a Pronoun instance, copy its data.
 		
 		this.sub = this.pronouns[0][0];
 		this.obj = this.pronouns[0][1];
