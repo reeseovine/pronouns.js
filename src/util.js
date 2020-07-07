@@ -1,12 +1,26 @@
 module.exports = {
 	// filter table to the rows which begin with q
+	// TODO: make this more concise if possible
 	tableFrontFilter: function(q, table){
-		return table.filter(row => row.slice(0, q.length()) == q);
+		var qlen = q.length;
+		return table.filter(row => {
+			for (var i = 0; i < qlen; i++){
+				if (row[i] != q[i]) return false;
+			}
+			return true;
+		});
 	},
 	
 	// filter table to the rows which end with q
+	// TODO: make this more concise if possible
 	tableEndFilter: function(q, table){
-		return table.filter(row => row.slice(q.length()-1) == q);
+		var qlen = q.length;
+		return table.filter(row => {
+			for (var i = 0; i < qlen; i++){
+				if (row[row.length-1-i] != q[qlen-1-i]) return false;
+			}
+			return true;
+		});
 	},
 
 	// find the row corresponding to q in table
@@ -24,9 +38,9 @@ module.exports = {
     // unambiguously refers to a specific <row> in a <table>. The behavior of
     // this function is undefined if given a <row> that is not in the <table>.
 	shortestUnambiguousForwardPath: function(table, row){
-		for (var n = 1; n < table.length(); n++){
+		for (var n = 1; n < table.length; n++){
 			var rowFront = row.slice(0, n);
-			if (this.tableFrontFilter(rowFront, table).length() <= 1){
+			if (this.tableFrontFilter(rowFront, table).length <= 1){
 				return rowFront;
 			}
 		}
@@ -36,11 +50,11 @@ module.exports = {
     // unambiguously refers to a specific <row> in a <table>. The behavior of
     // this function is undefined if given a <row> that is not in the <table>.
 	shortestUnambiguousEllipsesPath: function(table, row){
-		var rowEnd = row[row.length()-1];
+		var rowEnd = row[row.length-1];
 		var filteredTable = this.tableEndFilter(rowEnd, table);
-		for (var n = 1; n < table.length(); n++){
+		for (var n = 1; n < table.length; n++){
 			var rowFront = row.slice(0, n);
-			if (this.tableFrontFilter(rowFront, filteredTable).length() <= 1){
+			if (this.tableFrontFilter(rowFront, filteredTable).length <= 1){
 				return rowFront.concat(['...', rowEnd]);
 			}
 		}
@@ -58,16 +72,32 @@ module.exports = {
 	shortestUnambiguousPath: function(table, row){
 		var forwardPath = this.shortestUnambiguousForwardPath(table, row);
 		var ellipsesPath = this.shortestUnambiguousEllipsesPath(table, row);
-		if (forwardPath.length() > ellipsesPath.length()){
-			return ellipsesPath.join('/');
-		} else {
-			return forwardPath.join('/');
-		}
+		
+		if (forwardPath.length > ellipsesPath.length) return ellipsesPath;
+		else return forwardPath;
 	},
 	
 	// return the list of minimum unabiguous paths from a <table>
 	abbreviate: function(table){
 		return table.map(row => this.shortestUnambiguousPath(table, row));
+	},
+	
+	sanitizeSet: function(p, table){
+		var match = this.tableLookup(p, table);
+		if (!match){
+			console.warn(`Unrecognized pronoun "${p.join('/')}". This may lead to unexpected behavior.`);
+			while (p.length < 5){
+				p.push('');
+			}
+			if (p.length > 5){
+				p = p.slice(0,5);
+			}
+			return p;
+		} else return match;
+	},
+	
+	expandString: function(str, table){
+		return str.split(' or ').map(p => this.sanitizeSet(p.split('/'), table));
 	},
 	
 	// wrap a value <x> in an array if it is not already in one.
@@ -78,24 +108,5 @@ module.exports = {
 	
 	stripMarkup: function(form){
 		return form.flatten().filter(x => typeof x == 'string').join(' ');
-	},
-	
-	sanitizeSet: function(p, table){
-		console.log(p);
-		var match = this.tableLookup(p, table);
-		if (!match){
-			console.warn(`Unrecognized pronoun "${p.join('/')}". This may lead to unexpected behavior.`);
-			while (p.length() < 5){
-				p.push('');
-			}
-			if (p.length() > 5){
-				p = p.slice(0,5);
-			}
-			return p;
-		} else return match;
-	},
-	
-	expandString: function(str, table){
-		return str.split(' or ').map(p => this.sanitizeSet(p.split('/'), table));
 	}
 }
