@@ -104,9 +104,5 @@ module.exports = {
 	arrFormat: function(x){
 		if (!Array.isArray(x)) return [x];
 		return x;
-	},
-	
-	stripMarkup: function(form){
-		return form.flatten().filter(x => typeof x == 'string').join(' ');
 	}
 }
