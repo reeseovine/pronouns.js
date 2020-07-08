@@ -44,7 +44,9 @@ module.exports = function(input){
 				];
 			}
 			return examples;
-		})()
+		})(),
+		
+		url: `https://pronoun.is/${pronouns.map(p => util.shortestUnambiguousPath(table, p).join('/')).join('/:or/')}`
 	}
 }
 
