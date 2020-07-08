@@ -18,7 +18,7 @@ const listAbbr = require('./abbreviatedList.json');
 	const sample3_Expected = [
 		['she', 'her', 'her', 'hers', 'herself'],
 		['they', 'them', 'their', 'theirs', 'themself']
-	]
+	];
 	
 	assert.deepStrictEqual( util.tableFrontFilter(['it'], list), [sample1_Row] );
 	
@@ -40,9 +40,8 @@ const listAbbr = require('./abbreviatedList.json');
 	
 	assert.deepStrictEqual( util.abbreviate(list), listAbbr );
 	
-	assert.deepStrictEqual( util.sanitizeSet(sample1_Shortened, list), sample1_Row );
-	assert.deepStrictEqual( util.sanitizeSet(['a', 'b'], list), ['a', 'b', '', '', ''] );
-	assert.deepStrictEqual( util.sanitizeSet(['a', 'b', 'c', 'd', 'e', 'f', 'g'], list), ['a', 'b', 'c', 'd', 'e'] );
+	assert.deepStrictEqual( util.sanitizeSet([sample1_Shortened], list), [sample1_Row] );
+	assert.deepStrictEqual( util.sanitizeSet([['a', 'b'], ['a', 'b', 'c', 'd', 'e', 'f', 'g']], list), [['a', 'b', '', '', ''], ['a', 'b', 'c', 'd', 'e']] );
 	
 	assert.deepStrictEqual( util.expandString(sample3_String, list), sample3_Expected );
 	

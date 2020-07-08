@@ -1,19 +1,53 @@
 const util = require('./util');
-const list = require('../resources/pronouns.json');
+const table = require('../resources/pronouns.json');
 
-module.exports = class Pronoun {
-	// util = util;
-	// list = list;
+module.exports = function(input){
+	var pronouns;
+	if (typeof input === "string") pronouns = util.expandString(input, table); // passed a string, most common option.
+	else if (typeof input === "object"){
+		if (input.pronouns && Array.isArray(input.pronouns)) pronouns = util.sanitizeSet(input.pronouns, table); // passed a pronouns-like object.
+		else if (Array.isArray(input)) pronouns = util.sanitizeSet(input, table); // passed an array representing some pronouns.
+	}
 	
-	constructor(input){
-		if (typeof input === "string") this.pronouns = util.expandString(input, list);
-		else if (Array.isArr(input)) this.pronouns = input.map(p => util.sanitizeSet(p, list));
-		// else if () this.pronouns = input.pronouns; // if passed a Pronoun instance, copy its data.
+	return {
+		pronouns,
 		
-		this.sub = this.pronouns[0][0];
-		this.obj = this.pronouns[0][1];
-		this.det = this.pronouns[0][2];
-		this.pos = this.pronouns[0][3];
-		this.ref = this.pronouns[0][4];
+		sub: pronouns[0][0], // subject
+		subject: pronouns[0][0], // subject
+		
+		obj: pronouns[0][1], // object
+		object: pronouns[0][1], // object
+		
+		det: pronouns[0][2], // possessive determiner
+		determiner: pronouns[0][2], // possessive determiner
+		
+		pos: pronouns[0][3], // possessive
+		possessive: pronouns[0][3], // possessive
+		
+		ref: pronouns[0][4], // reflexive
+		reflexive: pronouns[0][4], // reflexive
+		
+		
+		toString: () => {
+			return pronouns.map(p => util.shortestUnambiguousPath(table, p).join('/')).join(' or ');
+		},
+		
+		examples: (() => {
+			var examples = [];
+			for (var i = 0, p; p = pronouns[i]; i++){
+				examples[i] = [
+					util.capitalize(`${p[0]} went to the park.`),
+					util.capitalize(`I went with ${p[1]}.`),
+					util.capitalize(`${p[0]} brought ${p[2]} frisbee.`),
+					util.capitalize(`At least I think it was ${p[3]}.`),
+					util.capitalize(`${p[0]} threw the frisbee to ${p[4]}.`)
+				];
+			}
+			return examples;
+		})()
 	}
 }
+
+module.exports.util = util;
+module.exports.table = table;
+module.exports.abbreviated = util.abbreviate(table);

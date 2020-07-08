@@ -83,26 +83,33 @@ module.exports = {
 	},
 	
 	sanitizeSet: function(p, table){
-		var match = this.tableLookup(p, table);
-		if (!match){
-			console.warn(`Unrecognized pronoun "${p.join('/')}". This may lead to unexpected behavior.`);
-			while (p.length < 5){
-				p.push('');
-			}
-			if (p.length > 5){
-				p = p.slice(0,5);
-			}
-			return p;
-		} else return match;
+		return p.map(row => {
+			var match = this.tableLookup(row, table);
+			if (!match){
+				console.warn(`Unrecognized pronoun "${row.join('/')}". This may lead to unexpected behavior.`);
+				while (row.length < 5){
+					row.push('');
+				}
+				if (row.length > 5){
+					row = row.slice(0,5);
+				}
+				return row;
+			} else return match;
+		});
 	},
 	
 	expandString: function(str, table){
-		return str.split(' or ').map(p => this.sanitizeSet(p.split('/'), table));
+		return this.sanitizeSet(str.split(' or ').map(p => p.split('/')), table);
 	},
 	
 	// wrap a value <x> in an array if it is not already in one.
 	arrFormat: function(x){
 		if (!Array.isArray(x)) return [x];
 		return x;
+	},
+	
+	// capitalize forst letter of a given string
+	capitalize: function(str){
+		return str.charAt(0).toUpperCase() + str.slice(1);
 	}
 }

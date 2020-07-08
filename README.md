@@ -1,53 +1,75 @@
-# pronoun.js
+# pronouns.js
 
 personal pronoun helper module. fork of [pronoun.is](https://github.com/witch-house/pronoun.is).
 
+`pronouns.js` aims to be an easy way to handle numerous personal pronouns in English. It remains open-ended to allow for myriad use cases. One possible application could be in a social media service in which users can add their pronoun(s) and the interface can refer to them properly.
 
-### The database
+## Basic usage
 
-The pronouns "database" is an array of arrays meant to represent a table, located in [resources/pronouns.json][pronoun-database], with fields and example values as follows:
+`npm i --save pronouns`
+
+```js
+const pronouns = require('pronouns');
+const my = pronouns('they/them');
+
+console.log(my.pronouns);
+// ['they', 'them', 'their', 'theirs', 'themself']
+
+console.log(my.subject);
+// 'they'
+
+console.log(pronouns.table);
+// [
+//   ["she", "her", "her", "hers", "herself"],
+//   ["he", "him", "his", "his", "himself"],
+//   ["they", "them", "their", "theirs", "themself"],
+//   ["ze", "hir", "hir", "hirs", "hirself"],
+//   ["ze", "zir", "zir", "zirs", "zirself"],
+//   ["xey", "xem", "xyr", "xyrs", "xemself"],
+//   ...
+// ]
+```
+
+## The database
+
+The pronouns "database" is an array of arrays meant to represent a table, located in [resources/pronouns.json](resources/pronouns.json), with fields and example values as follows:
 
 subject|object|possessive-determiner|possessive-pronoun|reflexive
 -------|------|---------------------|------------------|---------
 they   | them | their               | theirs           | themselves
 
-If you have suggestions or changes to the database, please submit an issue or pull request with the [original repository](https://github.com/witch-house/pronoun.is) and published changes will be updated here by hand.
+## The code
 
-[pronoun-database]: resources/pronouns.json
+`index.js` is the main program. `pronouns` is both a function you can call with a string parameter, and an object with references to the table and a few helpers.
 
-### The code
+`util.js` has most of what was translated from the original Clojure code. These functions are mostly meant for accessing rows in a table or formatting strings and is not needed for typical users, but is exposed nonetheless as `pronouns.util`.
 
+All of the following are valid inputs to the `pronouns` function:
 
+* she
+* he/him
+* ze/hir or they/.../themselves
+* she/her or they/them or it/its or sie/hir
 
-### Tests
+## Tests
 
-TBD
+The `test/` directory contains unit tests for `index.js` and `util.js`. Please run the tests and confirm that everything passes before merging changes, and please include tests with any new logic you introduce in a PR!
 
-### The git repo
+## Contributing
 
-For most of this project's history we had separate `master` and `develop`
-branches but that's proven to be more trouble than it's worth. Going
-forward we'll be doing all development in feature branches off of `master`,
-and PRs should be issued against `master`.
+Issues and pull/merge requests regarding the code are very much welcome! If you would like to request pronouns to be added to the table there is an issue template for doing so. You should also consider doing the same with the original repository.
 
-Please follow [this guide](https://chris.beams.io/posts/git-commit/)
-for writing good commit messages :)
+## To do
 
-## Philosophy on pronoun inclusion
-
-`pronoun.js` aims to be an easy way to handle numerous personal pronouns in English. It remains open-ended to allow for myriad use cases.
+* More comprehensive documentation
+* Handle unknown or badly formatted inputs better
+* Autocomplete!
+* Interactive demos and sample code
 
 ## License
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as
-published by the Free Software Foundation, either version 3 of the
-License, or (at your option) any later version.
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>
+You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
