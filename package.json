@@ -1,11 +1,10 @@
 {
   "name": "pronoun",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "personal pronoun helper",
   "main": "src/index.js",
-  "private": "true",
   "scripts": {
-    "test": "node test.js"
+    "test": "node test/utilTests.js; node test/mainTests.js"
   },
   "repository": {
     "type": "git",
