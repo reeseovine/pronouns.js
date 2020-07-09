@@ -36,13 +36,13 @@ The pronouns "database" is an array of arrays meant to represent a table, locate
 
 subject|object|possessive-determiner|possessive-pronoun|reflexive
 -------|------|---------------------|------------------|---------
-they   | them | their               | theirs           | themselves
+they   | them | their               | theirs           | themself
 
 ## The code
 
-`index.js` is the main program. `pronouns` is both a function you can call with a string parameter, and an object with references to the table and a few helpers.
-
 `util.js` has most of what was translated from the original Clojure code. These functions are mostly meant for accessing rows in a table or formatting strings and is not needed for typical users, but is exposed nonetheless as `pronouns.util`.
+
+`index.js` is the main program. `pronouns` is both a function you can call with a string parameter, and an object with references to the table and a few helpers.
 
 All of the following are valid inputs to the `pronouns` function:
 
@@ -62,9 +62,10 @@ Issues and pull/merge requests regarding the code are very much welcome! If you 
 ## To do
 
 * More comprehensive documentation
-* Handle unknown or badly formatted inputs better
+* Handle "any/all", unknown, or badly formatted inputs better
+	* Should it default to they/them?
 * Autocomplete!
-* Interactive demos and sample code
+* Interactive demos and examples
 
 ## License
 
