@@ -1,0 +1,2 @@
+require('./utilTests');
+require('./mainTests');

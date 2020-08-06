@@ -28,9 +28,6 @@ module.exports = function(input){
 		reflexive: pronouns[0][4], // reflexive
 		
 		
-		toString: () => {
-			return pronouns.map(p => util.shortestUnambiguousPath(table, p).join('/')).join(' or ');
-		},
 		
 		examples: (() => {
 			var examples = [];
@@ -46,7 +43,10 @@ module.exports = function(input){
 			return examples;
 		})(),
 		
-		url: `https://pronoun.is/${pronouns.map(p => util.shortestUnambiguousPath(table, p).join('/')).join('/:or/')}`
+		toString: () => pronouns.map(p => util.shortestUnambiguousPath(table, p).join('/')).join(' or '),
+		
+		url: `https://pronoun.is/${pronouns.map(p => util.shortestUnambiguousPath(table, p).join('/')).join('/:or/')}`, // deprecated, use toUrl()
+		toUrl: () => `https://pronoun.is/${pronouns.map(p => util.shortestUnambiguousPath(table, p).join('/')).join('/:or/')}`
 	}
 }
 

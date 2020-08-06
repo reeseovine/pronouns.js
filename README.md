@@ -42,7 +42,7 @@ they   | them | their               | theirs           | themself
 
 `util.js` has most of what was translated from the original Clojure code. These functions are mostly meant for accessing rows in a table or formatting strings and is not needed for typical users, but is exposed nonetheless as `pronouns.util`.
 
-`index.js` is the main program. `pronouns` is both a function you can call with a string parameter, and an object with references to the table and a few helpers.
+`index.js` is the main program. `pronouns` is both a function you can call with a string parameter, and an object with references to the table and a few methods.
 
 All of the following are valid inputs to the `pronouns` function:
 
@@ -64,6 +64,8 @@ Issues and pull/merge requests regarding the code are very much welcome! If you 
 * More comprehensive documentation
 * Handle "any/all", unknown, or badly formatted inputs better
 	* Should it default to they/them?
+* Parse even shorter multi-pronoun inputs like "they/she" or "she/him"
+* Allow adding to an existing object
 * Autocomplete!
 * Interactive demos and examples
 
