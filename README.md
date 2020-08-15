@@ -65,14 +65,6 @@ Issues and pull/merge requests regarding the code are very much welcome! If you 
 * Handle "any/all", unknown, or badly formatted inputs better
 	* Should it default to they/them?
 * Parse even shorter multi-pronoun inputs like "they/she" or "she/him"
-* Allow adding to an existing object
+* Allow adding to or modifying an existing object
 * Autocomplete!
 * Interactive demos and examples
-
-## License
-
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>

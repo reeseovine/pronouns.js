@@ -27,6 +27,17 @@ const pronouns = require('../src/index');
 	const sample1_URL = "https://pronoun.is/she/:or/they/.../themself";
 	const sample1_Obj = pronouns(sample1_String);
 	
+	assert.deepStrictEqual( sample1_Obj.pronouns, sample1_Array );
+	assert.deepStrictEqual( sample1_Obj.sub, sample1_Array[0][0] );
+	assert.deepStrictEqual( sample1_Obj.obj, sample1_Array[0][1] );
+	assert.deepStrictEqual( sample1_Obj.det, sample1_Array[0][2] );
+	assert.deepStrictEqual( sample1_Obj.pos, sample1_Array[0][3] );
+	assert.deepStrictEqual( sample1_Obj.ref, sample1_Array[0][4] );
+	assert.deepStrictEqual( sample1_Obj.examples, sample1_examples );
+	assert.strictEqual( sample1_Obj.toString(), sample1_toString );
+	assert.strictEqual( sample1_Obj.toUrl(), sample1_URL );
+	
+	
 	const sample2_String = "fae/faer";
 	const sample2_toString = "fae";
 	const sample2_Array = [
@@ -43,16 +54,6 @@ const pronouns = require('../src/index');
 	];
 	const sample2_URL = "https://pronoun.is/fae";
 	const sample2_Obj = pronouns(sample2_String);
-	
-	assert.deepStrictEqual( sample1_Obj.pronouns, sample1_Array );
-	assert.deepStrictEqual( sample1_Obj.sub, sample1_Array[0][0] );
-	assert.deepStrictEqual( sample1_Obj.obj, sample1_Array[0][1] );
-	assert.deepStrictEqual( sample1_Obj.det, sample1_Array[0][2] );
-	assert.deepStrictEqual( sample1_Obj.pos, sample1_Array[0][3] );
-	assert.deepStrictEqual( sample1_Obj.ref, sample1_Array[0][4] );
-	assert.deepStrictEqual( sample1_Obj.examples, sample1_examples );
-	assert.strictEqual( sample1_Obj.toString(), sample1_toString );
-	assert.strictEqual( sample1_Obj.toUrl(), sample1_URL );
 	
 	assert.deepStrictEqual( sample2_Obj.pronouns, sample2_Array );
 	assert.deepStrictEqual( sample2_Obj.sub, sample2_Array[0][0] );
