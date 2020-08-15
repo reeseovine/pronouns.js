@@ -63,8 +63,8 @@ Issues and pull/merge requests regarding the code are very much welcome! If you 
 
 * More comprehensive documentation
 * Handle "any/all", unknown, or badly formatted inputs better
-	* Should it default to they/them?
+	* Should default to they/them
 * Parse even shorter multi-pronoun inputs like "they/she" or "she/him"
-* Allow adding to or modifying an existing object
+* Allow modifying an existing object
 * Autocomplete!
 * Interactive demos and examples

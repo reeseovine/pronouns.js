@@ -2,29 +2,39 @@ const util = require('./util');
 const table = require('../resources/pronouns.json');
 
 class Pronouns {
-	constructor(pronouns){
-		this.pronouns = pronouns;
+	constructor(input){
+		this.pronouns = this._process(input);
 		this.generateForms();
 		this.generateExamples();
+	}
+	
+	_process(input){
+		if (typeof input === "string") return util.expandString(input, table); // passed a string, most common case.
+		else if (typeof input === "object"){
+			if (input.pronouns && Array.isArray(input.pronouns)) return util.sanitizeSet(input.pronouns, table); // passed a pronouns-like object.
+			else if (Array.isArray(input)) return util.sanitizeSet(input, table); // passed an array representing some pronouns.
+		} else {
+			console.warn("Unrecognized input. Defaulting to they/them.");
+			return util.tableLookup("they", table);
+		}
 	}
 	
 	generateForms(i){
 		i = Number.isInteger(i) ? i : 0;
 		
-		this.sub = this.pronouns[i][0]; // subject
-		this.subject = this.pronouns[i][0]; // subject
+		// the 5 main pronoun types
+		this.subject = this.pronouns[i][0];
+		this.object = this.pronouns[i][1];
+		this.determiner = this.pronouns[i][2];
+		this.possessive = this.pronouns[i][3];
+		this.reflexive = this.pronouns[i][4];
 		
-		this.obj = this.pronouns[i][1]; // object
-		this.object = this.pronouns[i][1]; // object
-		
-		this.det = this.pronouns[i][2]; // possessive determiner
-		this.determiner = this.pronouns[i][2]; // possessive determiner
-		
-		this.pos = this.pronouns[i][3]; // possessive
-		this.possessive = this.pronouns[i][3]; // possessive
-		
-		this.ref = this.pronouns[i][4]; // reflexive
-		this.reflexive = this.pronouns[i][4]; // reflexive
+		// aliases
+		this.sub = this.subject;
+		this.obj = this.object;
+		this.det = this.determiner;
+		this.pos = this.possessive;
+		this.ref = this.reflexive;
 	}
 	
 	generateExamples(){
@@ -47,19 +57,20 @@ class Pronouns {
 	toUrl(){
 		return `https://pronoun.is/${this.pronouns.map(p => util.shortestUnambiguousPath(table, p).join('/')).join('/:or/')}`;
 	}
-}
-
-module.exports = function(input){
-	var pronouns;
-	if (typeof input === "string") pronouns = util.expandString(input, table); // passed a string, most common option.
-	else if (typeof input === "object"){
-		if (input.pronouns && Array.isArray(input.pronouns)) pronouns = util.sanitizeSet(input.pronouns, table); // passed a pronouns-like object.
-		else if (Array.isArray(input)) pronouns = util.sanitizeSet(input, table); // passed an array representing some pronouns.
-	}
 	
-	return new Pronouns(pronouns);
+	add(input){
+		var newRows = this._process(input);
+		for (var i = 0, p; p = newRows[i]; i++){
+			if (!this.pronouns.includes(p)){
+				this.pronouns.push(p);
+			}
+		}
+		this.generateExamples();
+	}
 }
 
+module.exports = (input) => new Pronouns(input);
 module.exports.util = util;
 module.exports.table = table;
 module.exports.abbreviated = util.abbreviate(table);
+module.exports.Pronouns = Pronouns;
