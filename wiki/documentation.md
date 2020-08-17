@@ -74,3 +74,7 @@ This is an abbreviated table containing the shortest unambiguous path to get to 
 ### `pronouns.util`
 
 The `util` object is exposed in case you want to use it, though most users will not need to. Most of its methods are for accessing and formatting rows from a table. Its source is located in [src/util.js](src/util.js).
+
+### `pronouns.Pronouns`
+
+This is the `Pronouns` class, of which instances are returned by the main function. You probably won't need to access it directly but it's there in case the main function just isn't cutting it for you.
