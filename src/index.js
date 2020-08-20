@@ -77,25 +77,27 @@ module.exports.Pronouns = Pronouns;
 module.exports.complete = (input) => {
 	var rest = input.substring(0, input.lastIndexOf(' ') + 1).replace(/\s+/g, ' ');
 	var last = input.substring(input.lastIndexOf(' ') + 1, input.length);
-		
-	var parts = last.split('/');
-	var end = parts.pop();
 	
-	/* if (parts.includes('...')){
-		var queryFront = q.slice(0, q.indexOf('...'));
-		var queryEnd = q.slice(q.indexOf('...')+1);
-		var frontMatches = this.tableFrontFilter(queryFront, table);
-		return this.tableEndFilter(queryEnd, frontMatches)[0];
-	} */
+	// Generate list of matching rows
 	var matches = [];
 	if (last.length == 0){
-		
 		matches = table;
 	} else {
+		var parts = last.split('/');
+		var end = parts.pop();
 		matches = util.tableFrontFilter(parts, table);
 		matches = matches.filter(row => row[parts.length].substring(0, end.length) === end);
 		if (last.match(/^[Oo][Rr]?$/g)) matches.unshift(['or']);
 	}
+	
+	// Filter matches to those which are not already in rest of input
+	var all = util.expandString(rest, table);
+	matches = matches.filter(m => {
+		for (var p of all){
+			if (util.rowsEqual(p,m)) return false;
+		}
+		return true;
+	});
 	
 	return matches.map(row => rest + util.shortestUnambiguousPath(table, row).join('/'));
 	

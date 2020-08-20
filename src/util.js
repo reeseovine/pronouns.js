@@ -1,14 +1,8 @@
 module.exports = {
 	// filter table to the rows which begin with q
-	// TODO: make this more concise if possible
 	tableFrontFilter: function(q, table){
 		var qlen = q.length;
-		return table.filter(row => {
-			for (var i = 0; i < qlen; i++){
-				if (row[i] != q[i]) return false;
-			}
-			return true;
-		});
+		return table.filter(row => this.rowsEqual(q, row) );
 	},
 	
 	// filter table to the rows which end with q
@@ -99,7 +93,7 @@ module.exports = {
 	},
 	
 	expandString: function(str, table){
-		return this.sanitizeSet(str.split(' ').filter(p => !p.match(/[Oo][Rr]/g)).map(p => p.replace(/[^a-zA-Z\/]/, '').toLowerCase().split('/')), table);
+		return this.sanitizeSet(str.split(' ').filter(p => !p.match(/[Oo][Rr]/g)).map(p => p.replace(/[^a-zA-Z\/'.]/, '').toLowerCase().split('/')), table);
 	},
 	
 	// wrap a value <x> in an array if it is not already in one.
@@ -111,5 +105,13 @@ module.exports = {
 	// capitalize first letter of a given string
 	capitalize: function(str){
 		return str.charAt(0).toUpperCase() + str.slice(1);
+	},
+	
+	// check if two arrays are similar. will permit array b to be longer by design.
+	rowsEqual: function(a, b){
+		for (var i = 0; i < a.length; i++){
+			if (a[i] != b[i]) return false;
+		}
+		return true;
 	}
 }
