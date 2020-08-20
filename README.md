@@ -61,10 +61,10 @@ Issues and pull/merge requests regarding the code are very much welcome! If you 
 
 ## To do
 
-* More comprehensive documentation
+* ~~Autocomplete!~~
+* Interactive demos and examples
+* Parse even shorter multi-pronoun inputs like "they/she" or "she/him"
 * Handle "any/all", unknown, or badly formatted inputs better
 	* Should default to they/them
-* Parse even shorter multi-pronoun inputs like "they/she" or "she/him"
-* Allow modifying an existing object
-* Autocomplete!
-* Interactive demos and examples
+* Allow modifying an existing object (how would that work?)
+* More comprehensive documentation

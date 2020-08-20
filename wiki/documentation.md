@@ -1,8 +1,6 @@
-# Understanding `pronouns.js`
-
 **`pronouns` is a function that has its own properties as well.**
 
-Calling `pronouns('he')`, for example, will return the following object:
+Calling `pronouns('he')`, for example, will return a `Pronouns` class instance that looks similar to the following object:
 
 ```js
 {
@@ -27,7 +25,8 @@ Calling `pronouns('he')`, for example, will return the following object:
     ]
   ],
   toString: [Function: () => String],
-  toUrl: [Function: () => String]
+  toUrl: [Function: () => String],
+  add: [Function: (String) => None]
 }
 ```
 
@@ -57,7 +56,11 @@ Returns a human-readable string that can also be used as an input to get an iden
 
 ### `toUrl()`
 
-Returns a link to the [pronoun.is/](https://pronoun.is/) page corresponding to the object. These are formatted slightly differently than `toString()`.
+Returns a link to the [pronoun.is/](https://pronoun.is/) page corresponding to the object. These are formatted slightly differently than `toString()` to account for the limitations of URL paths.
+
+### `add(String input)`
+
+You can add more pronouns to an existing object by calling `add` with any string that would also work with the constructor. This function will then add the pronoun(s) to the end of the `.pronouns` array, omitting any duplicates, and generate examples.
 
 ---
 

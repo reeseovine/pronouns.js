@@ -99,7 +99,7 @@ module.exports = {
 	},
 	
 	expandString: function(str, table){
-		return this.sanitizeSet(str.split(' or ').map(p => p.split('/')), table);
+		return this.sanitizeSet(str.split(' ').filter(p => !p.match(/[Oo][Rr]/g)).map(p => p.replace(/[^a-zA-Z\/]/, '').toLowerCase().split('/')), table);
 	},
 	
 	// wrap a value <x> in an array if it is not already in one.
