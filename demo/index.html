@@ -18,7 +18,7 @@
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/gh/xcash/bootstrap-autocomplete@v2.3.5/dist/latest/bootstrap-autocomplete.min.js"></script>
 </head>
-<body style="padding-top: 30px;">
+<body style="padding:15px 0 275px 0;height:100%;">
 	<div class="container">
 		<div class="jumbotron">
 			<h1 class="display-4">pronouns.js</h1>
@@ -36,19 +36,23 @@
 		
 		<hr>
 		
-		<table class="table table-bordered">
-			<thead class="thead-light">
-				<tr>
-					<th scope="col">Subject</th>
-					<th scope="col">Object</th>
-					<th scope="col">Determiner</th>
-					<th scope="col">Possessive</th>
-					<th scope="col">Reflexive</th>
-				</tr>
-			</thead>
-			<tbody>
-			</tbody>
-		</table>
+		<div class="row overflow-auto">
+			<div class="col">
+				<table class="table table-bordered">
+					<thead class="thead-light">
+						<tr>
+							<th scope="col">Subject</th>
+							<th scope="col">Object</th>
+							<th scope="col">Determiner</th>
+							<th scope="col">Possessive</th>
+							<th scope="col">Reflexive</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+		</div>
 	</div>
 	
 	<script src="../dist/index.js"></script>
@@ -66,9 +70,9 @@ $('#pronouns').autoComplete({
 	}
 });
 
-$('#pronouns').on('change', function(){
+$('#pronouns').on('input autocomplete.select', function(){
 	var p = pronouns(this.value);
-	var html = '';
+	var html = ``;
 	for (var i = 0, row; row = p.pronouns[i]; i++){
 		if (!pronouns.util.rowsEqual(row,['','','','',''])){
 			html += `

@@ -1,4 +1,7 @@
 module.exports = {
+	// logging turned off by default.
+	logging: false,
+	
 	// filter table to the rows which begin with q
 	tableFrontFilter: function(q, table){
 		var qlen = q.length;
@@ -80,7 +83,7 @@ module.exports = {
 		return p.map(row => {
 			var match = this.tableLookup(row, table);
 			if (!match){
-				console.warn(`Unrecognized pronoun "${row.join('/')}". This may lead to unexpected behavior.`);
+				if (this.logging) console.warn(`Unrecognized pronoun "${row.join('/')}". This may lead to unexpected behavior.`);
 				while (row.length < 5){
 					row.push('');
 				}

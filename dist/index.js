@@ -44,8 +44,10 @@ module.exports=[
 
 },{}],2:[function(require,module,exports){
 module.exports = {
+	// logging turned off by default.
+	logging: false,
+	
 	// filter table to the rows which begin with q
-	// TODO: make this more concise if possible
 	tableFrontFilter: function(q, table){
 		var qlen = q.length;
 		return table.filter(row => this.rowsEqual(q, row) );
@@ -126,7 +128,7 @@ module.exports = {
 		return p.map(row => {
 			var match = this.tableLookup(row, table);
 			if (!match){
-				console.warn(`Unrecognized pronoun "${row.join('/')}". This may lead to unexpected behavior.`);
+				if (this.logging) console.warn(`Unrecognized pronoun "${row.join('/')}". This may lead to unexpected behavior.`);
 				while (row.length < 5){
 					row.push('');
 				}
@@ -165,6 +167,7 @@ module.exports = {
 },{}],3:[function(require,module,exports){
 const util = require('./util');
 const table = require('../resources/pronouns.json');
+var logging = false;
 
 class Pronouns {
 	constructor(input){
@@ -179,7 +182,7 @@ class Pronouns {
 			if (input.pronouns && Array.isArray(input.pronouns)) return util.sanitizeSet(input.pronouns, table); // passed a pronouns-like object.
 			else if (Array.isArray(input)) return util.sanitizeSet(input, table); // passed an array representing some pronouns.
 		} else {
-			console.warn("Unrecognized input. Defaulting to they/them.");
+			if (logging) console.warn("Unrecognized input. Defaulting to they/them.");
 			return util.tableLookup("they", table);
 		}
 	}
@@ -234,7 +237,11 @@ class Pronouns {
 	}
 }
 
-module.exports = (input) => new Pronouns(input);
+module.exports = (input, log) => {
+	logging = !!(log); // convert it to a boolean value
+	util.logging = logging;
+	return new Pronouns(input);
+}
 module.exports.util = util;
 module.exports.table = table;
 module.exports.abbreviated = util.abbreviate(table);
@@ -246,7 +253,8 @@ module.exports.complete = (input) => {
 	// Generate list of matching rows
 	var matches = [];
 	if (last.length == 0){
-		matches = table;
+		matches = table.slice();
+		if (rest.length >= 3 && !rest.match(/\s[Oo][Rr]\s$/g)) matches.unshift(['or']);
 	} else {
 		var parts = last.split('/');
 		var end = parts.pop();
