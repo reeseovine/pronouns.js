@@ -4,6 +4,8 @@ personal pronoun helper module. fork of [pronoun.is](https://github.com/witch-ho
 
 `pronouns.js` aims to be an easy way to handle numerous personal pronouns in English. It remains open-ended to allow for myriad use cases. One possible application could be in a social media service in which users can add their pronoun(s) and the interface can refer to them properly.
 
+Play the demo [here](https://katacarbix.github.io/pronouns.js/demo/index.html).
+
 ## Basic usage
 
 `npm i --save pronouns`
@@ -49,7 +51,7 @@ All of the following are valid inputs to the `pronouns` function:
 * she
 * he/him
 * ze/hir or they/.../themselves
-* she/her or they/them or it/its or sie/hir
+* she/her, they/them, it/its, or sie/hir
 
 ## Tests
 
@@ -62,7 +64,7 @@ Issues and pull/merge requests regarding the code are very much welcome! If you 
 ## To do
 
 * ~~Autocomplete!~~
-* Interactive demos and examples
+* ~~Interactive demos and examples~~
 * Parse even shorter multi-pronoun inputs like "they/she" or "she/him"
 * Handle "any/all", unknown, or badly formatted inputs better
 	* Should default to they/them

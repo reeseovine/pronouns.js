@@ -152,7 +152,7 @@ module.exports = {
 	
 	// capitalize first letter of a given string
 	capitalize: function(str){
-		return str.charAt(0).toUpperCase() + str.slice(1);
+		return str.replace(/[a-zA-Z]/, m => m.toUpperCase());
 	},
 	
 	// check if two arrays are similar. will permit array b to be longer by design.
@@ -209,11 +209,11 @@ class Pronouns {
 		this.examples = [];
 		for (var i = 0, p; p = this.pronouns[i]; i++){
 			this.examples.push([
-				util.capitalize(`${p[0]} went to the park.`),
-				util.capitalize(`I went with ${p[1]}.`),
-				util.capitalize(`${p[0]} brought ${p[2]} frisbee.`),
-				util.capitalize(`At least I think it was ${p[3]}.`),
-				util.capitalize(`${p[0]} threw the frisbee to ${p[4]}.`)
+				util.capitalize(`*${p[0]}* went to the park.`),
+				util.capitalize(`I went with *${p[1]}*.`),
+				util.capitalize(`*${p[0]}* brought *${p[2]}* frisbee.`),
+				util.capitalize(`At least I think it was *${p[3]}*.`),
+				util.capitalize(`*${p[0]}* threw the frisbee to *${p[4]}*.`)
 			]);
 		}
 	}
@@ -242,10 +242,6 @@ module.exports = (input, log) => {
 	util.logging = logging;
 	return new Pronouns(input);
 }
-module.exports.util = util;
-module.exports.table = table;
-module.exports.abbreviated = util.abbreviate(table);
-module.exports.Pronouns = Pronouns;
 module.exports.complete = (input) => {
 	var rest = input.substring(0, input.lastIndexOf(' ') + 1).replace(/\s+/g, ' ');
 	var last = input.substring(input.lastIndexOf(' ') + 1, input.length);
@@ -253,8 +249,8 @@ module.exports.complete = (input) => {
 	// Generate list of matching rows
 	var matches = [];
 	if (last.length == 0){
-		matches = table.slice();
-		if (rest.length >= 3 && !rest.match(/\s[Oo][Rr]\s$/g)) matches.unshift(['or']);
+		matches = table.slice(); // Clones the table so it doesn't get changed
+		if (!rest.match(/[Oo][Rr]\s$/g)) matches.unshift(['or']);
 	} else {
 		var parts = last.split('/');
 		var end = parts.pop();
@@ -272,41 +268,14 @@ module.exports.complete = (input) => {
 		return true;
 	});
 	
+	if (logging && matches.length == 0) console.log(`No matches for ${input} found.`);
+	
 	return matches.map(row => rest + util.shortestUnambiguousPath(table, row).join('/'));
-	
-	
-	/*
-	example input: fae_
-	example results:
-		fae (list of all)
-	
-	example input: she/her or th
-	example results:
-		she/her or they/.../themself
-		she/her or they/.../themselves
-		she/her or thon
-
-	example input: ze
-	example results:
-		ze/hir
-		ze/zir
-		ze/zem
-		ze/mer
-		zee
-	
-	example input: ze/
-	example results:
-		ze/hir
-		ze/zir
-		ze/zem
-		ze/mer
-		
-	example input: ze/z
-	example results:
-		ze/zir
-		ze/zem
-	*/
 }
+module.exports.util = util;
+module.exports.table = table;
+module.exports.abbreviated = util.abbreviate(table);
+module.exports.Pronouns = Pronouns;
 
 },{"../resources/pronouns.json":1,"./util":2}]},{},[3])(3)
 });

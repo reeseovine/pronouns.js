@@ -78,4 +78,6 @@ const pronouns = require('../src/index');
 	assert.strictEqual( sample2_Obj.toString(), sample2_toString );
 	assert.strictEqual( sample2_Obj+"", sample2_toString );
 	assert.strictEqual( sample2_Obj.toUrl(), sample2_URL );
+	
+	assert.deepStrictEqual( pronouns.complete("th"), ["they/.../themself", "they/.../themselves", "thon"] );
 }());

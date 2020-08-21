@@ -45,6 +45,13 @@ const listAbbr = require('./abbreviatedList.json');
 	
 	assert.deepStrictEqual( util.expandString(sample3_String, list), sample3_Expected );
 	
+	assert.strictEqual( util.capitalize("Hello,"), "Hello," );
+	assert.strictEqual( util.capitalize("world!"), "World!" );
+	
 	assert.deepStrictEqual( util.arrFormat('x'), ['x'] );
 	assert.deepStrictEqual( util.arrFormat(['x']), ['x'] );
+	
+	assert.strictEqual( util.rowsEqual(sample3_Expected[0], sample3_Expected[1]), false );
+	assert.strictEqual( util.rowsEqual(['a', 'b'], ['a', 'b']), true );
+	assert.strictEqual( util.rowsEqual(['a', 'b'], ['a', 'b', 'c']), true );
 }());

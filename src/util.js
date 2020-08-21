@@ -107,7 +107,7 @@ module.exports = {
 	
 	// capitalize first letter of a given string
 	capitalize: function(str){
-		return str.charAt(0).toUpperCase() + str.slice(1);
+		return str.replace(/[a-zA-Z]/, m => m.toUpperCase());
 	},
 	
 	// check if two arrays are similar. will permit array b to be longer by design.
