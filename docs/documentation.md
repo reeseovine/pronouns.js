@@ -48,7 +48,7 @@ This wiki is not an English lesson, so please look these up if you are confused.
 
 ### `examples`
 
-This is an array of examples of each pronoun form. Sample sentences taken from the [original code](https://github.com/witch-house/pronoun.is/blob/master/src/pronouns/pages.clj#L46).
+This is an array of examples of each pronoun form. Sample sentences taken from the [original code](https://github.com/witch-house/pronoun.is/blob/master/src/pronouns/pages.clj#L46), but I am open to using different ones if anyone has suggestions.
 
 ### `toString()`
 
