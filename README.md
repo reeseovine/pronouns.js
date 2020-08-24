@@ -34,7 +34,7 @@ console.log(pronouns.table);
 
 ## The database
 
-The pronouns "database" is an array of arrays meant to represent a table, located in [resources/pronouns.json](resources/pronouns.json), with fields and example values as follows:
+The pronouns "database" is a JSON object located in [resources/pronouns.json](resources/pronouns.json). The following table shows what each column means.
 
 subject|object|possessive-determiner|possessive-pronoun|reflexive
 -------|------|---------------------|------------------|---------
@@ -42,9 +42,7 @@ they   | them | their               | theirs           | themself
 
 ## The code
 
-`util.js` has most of what was translated from the original Clojure code. These functions are mostly meant for accessing rows in a table or formatting strings and is not needed for typical users, but is exposed nonetheless as `pronouns.util`.
-
-`index.js` is the main program. `pronouns` is both a function you can call with a string parameter, and an object with references to the table and a few methods.
+**`index.js`** is the main program. `pronouns` is both a function you can call with a string parameter, and an object with references to the table and a few methods.
 
 All of the following are valid inputs to the `pronouns` function:
 
@@ -52,6 +50,8 @@ All of the following are valid inputs to the `pronouns` function:
 * he/him
 * ze/hir or they/.../themselves
 * she/her, they/them, it/its, or sie/hir
+
+**`util.js`** has most of what was translated from the original Clojure code. These functions are mostly meant for accessing rows in a table or formatting strings and is not needed for typical users, but is exposed nonetheless as `pronouns.util`.
 
 ## Tests
 

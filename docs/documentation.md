@@ -84,4 +84,4 @@ This is the `Pronouns` class, of which instances are returned by the main functi
 
 ### `pronouns.complete(String)`
 
-See [completion].
+See [Completion](https://github.com/katacarbix/pronouns.js/wiki/Completion).
