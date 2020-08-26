@@ -10,7 +10,11 @@ class Pronouns {
 	}
 	
 	_process(input){
-		if (typeof input === "string") return util.expandString(input, table); // passed a string, most common case.
+		
+		if (typeof input === "string"){
+			if (!this.hasOwnProperty('any') || !this.any) this.any = !!input.match(/(\b(any(thing)?|all)\b|\*)/);
+			return util.expandString(input, table); // passed a string, most common case.
+		}
 		else if (typeof input === "object"){
 			if (input.pronouns && Array.isArray(input.pronouns)) return util.sanitizeSet(input.pronouns, table); // passed a pronouns-like object.
 			else if (Array.isArray(input)) return util.sanitizeSet(input, table); // passed an array representing some pronouns.
@@ -21,7 +25,7 @@ class Pronouns {
 	}
 	
 	generateForms(i){
-		i = Number.isInteger(i) ? i : 0;
+		i = Number.isInteger(parseInt(i)) ? parseInt(i) : 0;
 		
 		// the 5 main pronoun types
 		this.subject = this.pronouns[i][0];
@@ -40,13 +44,29 @@ class Pronouns {
 	
 	generateExamples(){
 		this.examples = [];
+		this.examples_html = [];
+		this.examples_md = [];
 		for (var i = 0, p; p = this.pronouns[i]; i++){
 			this.examples.push([
-				util.capitalize(`*${p[0]}* went to the park.`),
-				util.capitalize(`I went with *${p[1]}*.`),
-				util.capitalize(`*${p[0]}* brought *${p[2]}* frisbee.`),
-				util.capitalize(`At least I think it was *${p[3]}*.`),
-				util.capitalize(`*${p[0]}* threw the frisbee to *${p[4]}*.`)
+				util.capitalize(`${p[0]} went to the park.`),
+				util.capitalize(`I went with ${p[1]}.`),
+				util.capitalize(`${p[0]} brought ${p[2]} frisbee.`),
+				util.capitalize(`At least I think it was ${p[3]}.`),
+				util.capitalize(`${p[0]} threw the frisbee to ${p[4]}.`)
+			]);
+			this.examples_html.push([
+				util.capitalize(`<strong>${p[0]}</strong> went to the park.`),
+				util.capitalize(`I went with <strong>${p[1]}</strong>.`),
+				util.capitalize(`<strong>${p[0]}</strong> brought <strong>${p[2]}</strong> frisbee.`),
+				util.capitalize(`At least I think it was <strong>${p[3]}</strong>.`),
+				util.capitalize(`<strong>${p[0]}</strong> threw the frisbee to <strong>${p[4]}</strong>.`)
+			]);
+			this.examples_md.push([
+				util.capitalize(`**${p[0]}** went to the park.`),
+				util.capitalize(`I went with **${p[1]}**.`),
+				util.capitalize(`**${p[0]}** brought **${p[2]}** frisbee.`),
+				util.capitalize(`At least I think it was **${p[3]}**.`),
+				util.capitalize(`**${p[0]}** threw the frisbee to **${p[4]}**.`)
 			]);
 		}
 	}
