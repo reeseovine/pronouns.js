@@ -41,12 +41,14 @@ const listAbbr = require('./abbreviatedList.json');
 	assert.deepStrictEqual( util.abbreviate(list), listAbbr );
 	
 	assert.deepStrictEqual( util.sanitizeSet([sample1_Shortened], list), [sample1_Row] );
+	assert.deepStrictEqual( util.sanitizeSet([['any']], list), [] );
 	assert.deepStrictEqual( util.sanitizeSet([['a', 'b'], ['a', 'b', 'c', 'd', 'e', 'f', 'g']], list), [['a', 'b', '', '', ''], ['a', 'b', 'c', 'd', 'e']] );
 	
 	assert.deepStrictEqual( util.expandString(sample3_String, list), sample3_Expected );
 	
 	assert.strictEqual( util.capitalize("Hello,"), "Hello," );
 	assert.strictEqual( util.capitalize("world!"), "World!" );
+	assert.strictEqual( util.capitalize("1!a"), "1!A" );
 	
 	assert.deepStrictEqual( util.arrFormat('x'), ['x'] );
 	assert.deepStrictEqual( util.arrFormat(['x']), ['x'] );

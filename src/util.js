@@ -80,9 +80,14 @@ module.exports = {
 	},
 	
 	sanitizeSet: function(p, table){
-		return p.map(row => {
+		var out = [];
+		for (var row of p){
 			var match = this.tableLookup(row, table);
 			if (!match){
+				if (row.some(p => p.match(/(\b(any(thing)?|all)\b|\*)/))){
+					if (this.logging) console.log(`Wildcard detected.`);
+					continue;
+				}
 				if (this.logging) console.warn(`Unrecognized pronoun "${row.join('/')}". This may lead to unexpected behavior.`);
 				while (row.length < 5){
 					row.push('');
@@ -90,9 +95,10 @@ module.exports = {
 				if (row.length > 5){
 					row = row.slice(0,5);
 				}
-				return row;
-			} else return match;
-		});
+				out.push(row);
+			} else out.push(match);
+		}
+		return out;
 	},
 	
 	expandString: function(str, table){
@@ -107,7 +113,7 @@ module.exports = {
 	
 	// capitalize first letter of a given string
 	capitalize: function(str){
-		return str.replace(/[a-zA-Z]/, m => m.toUpperCase());
+		return str.replace(/[a-zA-Z]/, l => l.toUpperCase());
 	},
 	
 	// check if two arrays are similar. will permit array b to be longer by design.

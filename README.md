@@ -60,13 +60,3 @@ The `test/` directory contains unit tests for `index.js` and `util.js`. Please r
 ## Contributing
 
 Issues and pull/merge requests regarding the code are very much welcome! If you would like to request pronouns to be added to the table there is an issue template for doing so. You should also consider doing the same with the original repository.
-
-## To do
-
-* ~~Autocomplete!~~
-* ~~Interactive demos and examples~~
-* Parse even shorter multi-pronoun inputs like "they/she" or "she/him"
-* Handle "any/all", unknown, or badly formatted inputs better
-	* Should default to they/them
-* Allow modifying an existing object (how would that work?)
-* More comprehensive documentation
