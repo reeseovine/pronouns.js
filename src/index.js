@@ -17,10 +17,9 @@ class Pronouns {
 		else if (typeof input === "object"){
 			if (input.pronouns && Array.isArray(input.pronouns)) return util.sanitizeSet(input.pronouns, table); // passed a pronouns-like object.
 			else if (Array.isArray(input)) return util.sanitizeSet(input, table); // passed an array representing some pronouns.
-		} else {
-			if (logging) console.warn("Unrecognized input. Defaulting to they/them.");
-			return util.tableLookup(['they'], table);
 		}
+		if (logging) console.warn("Unrecognized input. Defaulting to they/them.");
+		return util.tableLookup(['they'], table);
 	}
 	
 	generateForms(i){

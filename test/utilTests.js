@@ -20,9 +20,25 @@ const listAbbr = require('./abbreviatedList.json');
 		['they', 'them', 'their', 'theirs', 'themself']
 	];
 	
+	const sample4_Query = ['hir'];
+	const sample4_Expected = [
+		[ 'ze', 'hir', 'hir', 'hirs', 'hirself' ],
+		[ 'sie', 'hir', 'hir', 'hirs', 'hirself' ],
+		[ 'shi', 'hir', 'hir', 'hirs', 'hirself' ],
+		[ 'zie', 'hir', 'hir', 'hirs', 'hirself' ]
+	];
+	
+	const sample5_Query = ['she', 'hers'];
+	const sample5_Expected = [ [ 'she', 'her', 'her', 'hers', 'herself' ] ];
+	
 	assert.deepStrictEqual( util.tableFrontFilter(['it'], list), [sample1_Row] );
 	
 	assert.deepStrictEqual( util.tableEndFilter(['itself'], list), [sample1_Row] );
+	
+	assert.deepStrictEqual( util.tableWalkFilter(sample4_Query, list), sample4_Expected );
+	assert.deepStrictEqual( util.tableWalkFilter(sample5_Query, list), sample5_Expected );
+	assert.deepStrictEqual( util.tableWalkFilter(['their', 'foo'], list), [] );
+	assert.deepStrictEqual( util.tableWalkFilter(['foo', 'bar'], list), [] );
 	
 	assert.deepStrictEqual( util.tableLookup(sample1_Shortened, list), sample1_Row );
 	assert.deepStrictEqual( util.tableLookup(sample2_Shortened, list), sample2_Row );

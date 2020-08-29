@@ -4,7 +4,6 @@ module.exports = {
 	
 	// filter table to the rows which begin with q
 	tableFrontFilter: function(q, table){
-		var qlen = q.length;
 		return table.filter(row => this.rowsEqual(q, row) );
 	},
 	
@@ -19,16 +18,29 @@ module.exports = {
 			return true;
 		});
 	},
+	
+	tableWalkFilter: function(q, table){
+		return table.filter(row => this.walkRow(q, row, 0,0));
+	},
+	walkRow: function(q, row, q_i, row_i){
+		if (q[q_i] != row[row_i]){
+			if (row_i == row.length-(q.length-q_i)) return false;
+			return this.walkRow(q, row, q_i, row_i+1);
+		}
+		if (q_i < q.length-1) return this.walkRow(q, row, q_i+1, row_i+1);
+		return true;
+	},
 
 	// find the row corresponding to q in table
 	tableLookup: function(q, table){
+		if (q.length > table[0].length) return;
 		if (q.includes('...')){
 			var queryFront = q.slice(0, q.indexOf('...'));
 			var queryEnd = q.slice(q.indexOf('...')+1);
 			var frontMatches = this.tableFrontFilter(queryFront, table);
 			return this.tableEndFilter(queryEnd, frontMatches)[0];
 		}
-		return this.tableFrontFilter(q, table)[0];
+		return this.tableWalkFilter(q, table)[0];
 	},
 	
 	// Compute the shortest (in number of path elements) forward path which
