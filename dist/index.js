@@ -49,7 +49,6 @@ module.exports = {
 	
 	// filter table to the rows which begin with q
 	tableFrontFilter: function(q, table){
-		var qlen = q.length;
 		return table.filter(row => this.rowsEqual(q, row) );
 	},
 	
@@ -64,16 +63,29 @@ module.exports = {
 			return true;
 		});
 	},
+	
+	tableWalkFilter: function(q, table){
+		return table.filter(row => this.walkRow(q, row, 0,0));
+	},
+	walkRow: function(q, row, q_i, row_i){
+		if (q[q_i] != row[row_i]){
+			if (row_i >= row.length-(q.length-q_i)) return false;
+			return this.walkRow(q, row, q_i, row_i+1);
+		}
+		if (q_i < q.length-1) return this.walkRow(q, row, q_i+1, row_i+1);
+		return true;
+	},
 
 	// find the row corresponding to q in table
 	tableLookup: function(q, table){
+		if (q.length > table[0].length) return;
 		if (q.includes('...')){
 			var queryFront = q.slice(0, q.indexOf('...'));
 			var queryEnd = q.slice(q.indexOf('...')+1);
 			var frontMatches = this.tableFrontFilter(queryFront, table);
 			return this.tableEndFilter(queryEnd, frontMatches)[0];
 		}
-		return this.tableFrontFilter(q, table)[0];
+		return this.tableWalkFilter(q, table)[0];
 	},
 	
 	// Compute the shortest (in number of path elements) forward path which
@@ -129,11 +141,36 @@ module.exports = {
 		for (var row of p){
 			var match = this.tableLookup(row, table);
 			if (!match){
+				var expansions = [];
+				var badMatch = false;
+				for (var part of row){
+					var match = this.tableLookup([part], table);
+					if (part.match(/(\b(any(thing)?|all)\b|\*)/)){
+						if (this.logging) console.log(`Wildcard detected.`);
+						continue;
+					}
+					if (!match){
+						badMatch = true;
+						break;
+					}
+					else expansions.push(match);
+				}
+				if (!badMatch){
+					out = out.concat(expansions.filter(e => {
+						for (var p of out){
+							if (util.rowsEqual(p,e)) return false;
+						}
+						return true;
+					}));
+					continue;
+				}
+				
 				if (row.some(p => p.match(/(\b(any(thing)?|all)\b|\*)/))){
 					if (this.logging) console.log(`Wildcard detected.`);
 					continue;
 				}
-				if (this.logging) console.warn(`Unrecognized pronoun "${row.join('/')}". This may lead to unexpected behavior.`);
+				
+				if (this.logging) console.warn(`Unrecognized pronoun(s) "${row.join('/')}". This may lead to unexpected behavior.`);
 				while (row.length < 5){
 					row.push('');
 				}
@@ -147,7 +184,7 @@ module.exports = {
 	},
 	
 	expandString: function(str, table){
-		return this.sanitizeSet(str.split(' ').filter(p => !p.match(/[Oo][Rr]/g)).map(p => p.replace(/[^a-zA-Z\/'.]/, '').toLowerCase().split('/')), table);
+		return this.sanitizeSet(str.trim().split(' ').filter(p => !p.match(/[Oo][Rr]/g)).map(p => p.replace(/[^a-zA-Z\/'.]/, '').toLowerCase().split('/')), table);
 	},
 	
 	// wrap a value <x> in an array if it is not already in one.
@@ -183,7 +220,6 @@ class Pronouns {
 	}
 	
 	_process(input){
-		
 		if (typeof input === "string"){
 			if (!this.hasOwnProperty('any') || !this.any) this.any = !!input.match(/(\b(any(thing)?|all)\b|\*)/);
 			return util.expandString(input, table); // passed a string, most common case.
@@ -191,21 +227,21 @@ class Pronouns {
 		else if (typeof input === "object"){
 			if (input.pronouns && Array.isArray(input.pronouns)) return util.sanitizeSet(input.pronouns, table); // passed a pronouns-like object.
 			else if (Array.isArray(input)) return util.sanitizeSet(input, table); // passed an array representing some pronouns.
-		} else {
-			if (logging) console.warn("Unrecognized input. Defaulting to they/them.");
-			return util.tableLookup("they", table);
 		}
+		if (logging) console.warn("Unrecognized input. Defaulting to they/them.");
+		return util.tableLookup(['they'], table);
 	}
 	
 	generateForms(i){
 		i = Number.isInteger(parseInt(i)) ? parseInt(i) : 0;
+		var p = (this.pronouns && this.pronouns.length > 0) ? this.pronouns[i] : util.tableLookup(['they'], table);
 		
 		// the 5 main pronoun types
-		this.subject = this.pronouns[i][0];
-		this.object = this.pronouns[i][1];
-		this.determiner = this.pronouns[i][2];
-		this.possessive = this.pronouns[i][3];
-		this.reflexive = this.pronouns[i][4];
+		this.subject = p[0];
+		this.object = p[1];
+		this.determiner = p[2];
+		this.possessive = p[3];
+		this.reflexive = p[4];
 		
 		// aliases
 		this.sub = this.subject;
@@ -219,13 +255,9 @@ class Pronouns {
 		this.examples = [];
 		this.examples_html = [];
 		this.examples_md = [];
-		for (var i = -1; i < this.pronouns.length; i++){
-			var p;
-			if (this.pronouns.length == 0){
-				if (logging) console.warn("Pronouns array empty. Defaulting to they/them.");
-				p = util.tableLookup("they", table);
-			}
-			else p = this.pronouns[i];
+		var i = 0;
+		var p = (i < this.pronouns.length) ? this.pronouns[i] : util.tableLookup(['they'], table);
+		do {
 			this.examples.push([
 				util.capitalize(`${p[0]} went to the park.`),
 				util.capitalize(`I went with ${p[1]}.`),
@@ -247,11 +279,12 @@ class Pronouns {
 				util.capitalize(`At least I think it was **${p[3]}**.`),
 				util.capitalize(`**${p[0]}** threw the frisbee to **${p[4]}**.`)
 			]);
-		}
+			i++;
+		} while (p = this.pronouns[i]);
 	}
 	
 	toString(){
-		return this.pronouns.map(p => util.shortestUnambiguousPath(table, p).join('/')).join(' or ');
+		return this.pronouns.map(p => util.shortestUnambiguousPath(table, p).join('/')).concat(this.any ? [['any']] : []).join(' or ');
 	}
 	
 	toUrl(){

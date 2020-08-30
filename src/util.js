@@ -24,7 +24,7 @@ module.exports = {
 	},
 	walkRow: function(q, row, q_i, row_i){
 		if (q[q_i] != row[row_i]){
-			if (row_i == row.length-(q.length-q_i)) return false;
+			if (row_i >= row.length-(q.length-q_i)) return false;
 			return this.walkRow(q, row, q_i, row_i+1);
 		}
 		if (q_i < q.length-1) return this.walkRow(q, row, q_i+1, row_i+1);
@@ -96,11 +96,36 @@ module.exports = {
 		for (var row of p){
 			var match = this.tableLookup(row, table);
 			if (!match){
+				var expansions = [];
+				var badMatch = false;
+				for (var part of row){
+					var match = this.tableLookup([part], table);
+					if (part.match(/(\b(any(thing)?|all)\b|\*)/)){
+						if (this.logging) console.log(`Wildcard detected.`);
+						continue;
+					}
+					if (!match){
+						badMatch = true;
+						break;
+					}
+					else expansions.push(match);
+				}
+				if (!badMatch){
+					out = out.concat(expansions.filter(e => {
+						for (var p of out){
+							if (util.rowsEqual(p,e)) return false;
+						}
+						return true;
+					}));
+					continue;
+				}
+				
 				if (row.some(p => p.match(/(\b(any(thing)?|all)\b|\*)/))){
 					if (this.logging) console.log(`Wildcard detected.`);
 					continue;
 				}
-				if (this.logging) console.warn(`Unrecognized pronoun "${row.join('/')}". This may lead to unexpected behavior.`);
+				
+				if (this.logging) console.warn(`Unrecognized pronoun(s) "${row.join('/')}". This may lead to unexpected behavior.`);
 				while (row.length < 5){
 					row.push('');
 				}
@@ -114,7 +139,7 @@ module.exports = {
 	},
 	
 	expandString: function(str, table){
-		return this.sanitizeSet(str.split(' ').filter(p => !p.match(/[Oo][Rr]/g)).map(p => p.replace(/[^a-zA-Z\/'.]/, '').toLowerCase().split('/')), table);
+		return this.sanitizeSet(str.trim().split(' ').filter(p => !p.match(/[Oo][Rr]/g)).map(p => p.replace(/[^a-zA-Z\/'.]/, '').toLowerCase().split('/')), table);
 	},
 	
 	// wrap a value <x> in an array if it is not already in one.
