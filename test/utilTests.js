@@ -61,7 +61,7 @@ const listAbbr = require('./abbreviatedList.json');
 	assert.deepStrictEqual( util.sanitizeSet([['she', 'they']], list), sample3_Expected );
 	assert.deepStrictEqual( util.sanitizeSet([['her', 'them']], list), sample3_Expected );
 	assert.deepStrictEqual( util.sanitizeSet([['any']], list), [] );
-	assert.deepStrictEqual( util.sanitizeSet([['a', 'b'], ['a', 'b', 'c', 'd', 'e', 'f', 'g']], list), [['a', 'b', '', '', ''], ['a', 'b', 'c', 'd', 'e']] );
+	assert.deepStrictEqual( util.sanitizeSet([['a', 'b'], ['a', 'b', 'c', 'd', 'e', 'f', 'g']], list), [['a', 'b', 'c', 'd', 'e']] );
 	
 	assert.deepStrictEqual( util.expandString(sample3_String, list), sample3_Expected );
 	

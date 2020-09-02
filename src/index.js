@@ -15,8 +15,14 @@ class Pronouns {
 			return util.expandString(input, table); // passed a string, most common case.
 		}
 		else if (typeof input === "object"){
-			if (input.pronouns && Array.isArray(input.pronouns)) return util.sanitizeSet(input.pronouns, table); // passed a pronouns-like object.
-			else if (Array.isArray(input)) return util.sanitizeSet(input, table); // passed an array representing some pronouns.
+			if (Array.isArray(input.pronouns)){ // passed a Pronouns-like object.
+				if (input.any) this.any = input.any;
+				return util.sanitizeSet(input.pronouns, table);
+			}
+			else if (Array.isArray(input)){ // passed an array representing some pronouns.
+				if (!this.hasOwnProperty('any') || !this.any) this.any = input.flat().some(p => p.match(/(\b(any(thing)?|all)\b|\*)/));
+				return util.sanitizeSet(input, table);
+			}
 		}
 		if (logging) console.warn("Unrecognized input. Defaulting to they/them.");
 		return util.tableLookup(['they'], table);
@@ -92,9 +98,8 @@ class Pronouns {
 	}
 }
 
-module.exports = (input, log) => {
-	logging = !!log; // convert it to a boolean value
-	util.logging = logging;
+module.exports = (input, options) => {
+	logging = util.logging = (typeof options === "object" && options.hasOwnProperty('log')) ? !!options.log : logging;
 	return new Pronouns(input);
 }
 module.exports.complete = (input) => {
@@ -104,8 +109,8 @@ module.exports.complete = (input) => {
 	// Generate list of matching rows
 	var matches = [];
 	if (last.length == 0){
-		matches = table.slice(); // Clones the table so it doesn't get changed
-		if (!rest.match(/[Oo][Rr]\s$/g)) matches.unshift(['or']);
+		matches = table.slice(); // Clone the table so it doesn't get changed
+		if (!rest.match(/(^|or|and)\s*?$/)) matches.unshift(['or']);
 	} else {
 		var parts = last.split('/');
 		var end = parts.pop();

@@ -94,6 +94,9 @@ module.exports = {
 	sanitizeSet: function(p, table){
 		var out = [];
 		for (var row of p){
+			if (row.length < 1) continue;
+			if (row.length == 1 && row[0].match(/\b(or|and)\b/)) continue;
+			
 			var match = this.tableLookup(row, table);
 			if (!match){
 				var expansions = [];
@@ -111,12 +114,7 @@ module.exports = {
 					else expansions.push(match);
 				}
 				if (!badMatch){
-					out = out.concat(expansions.filter(e => {
-						for (var p of out){
-							if (util.rowsEqual(p,e)) return false;
-						}
-						return true;
-					}));
+					out = out.concat(expansions);
 					continue;
 				}
 				
@@ -126,20 +124,25 @@ module.exports = {
 				}
 				
 				if (this.logging) console.warn(`Unrecognized pronoun(s) "${row.join('/')}". This may lead to unexpected behavior.`);
-				while (row.length < 5){
-					row.push('');
+				if (row.length >= 5){
+					if (row.length > 5){
+						row = row.slice(0,5);
+					}
+					if (!row.includes('')) out.push(row);
 				}
-				if (row.length > 5){
-					row = row.slice(0,5);
-				}
-				out.push(row);
 			} else out.push(match);
 		}
+		out = out.filter((row,i) => {
+			for (var p of out.slice(0,i)){
+				if (this.rowsEqual(p,row)) return false;
+			}
+			return true;
+		});
 		return out;
 	},
 	
 	expandString: function(str, table){
-		return this.sanitizeSet(str.trim().split(' ').filter(p => !p.match(/[Oo][Rr]/g)).map(p => p.replace(/[^a-zA-Z\/'.]/, '').toLowerCase().split('/')), table);
+		return this.sanitizeSet(str.trim().split(' ').map(p => p.replace(/[^a-zA-Z\/'.]/, '').toLowerCase().split('/')), table);
 	},
 	
 	// wrap a value <x> in an array if it is not already in one.

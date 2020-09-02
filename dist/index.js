@@ -139,6 +139,9 @@ module.exports = {
 	sanitizeSet: function(p, table){
 		var out = [];
 		for (var row of p){
+			if (row.length < 1) continue;
+			if (row.length == 1 && row[0].match(/\b(or|and)\b/)) continue;
+			
 			var match = this.tableLookup(row, table);
 			if (!match){
 				var expansions = [];
@@ -156,12 +159,7 @@ module.exports = {
 					else expansions.push(match);
 				}
 				if (!badMatch){
-					out = out.concat(expansions.filter(e => {
-						for (var p of out){
-							if (util.rowsEqual(p,e)) return false;
-						}
-						return true;
-					}));
+					out = out.concat(expansions);
 					continue;
 				}
 				
@@ -171,20 +169,25 @@ module.exports = {
 				}
 				
 				if (this.logging) console.warn(`Unrecognized pronoun(s) "${row.join('/')}". This may lead to unexpected behavior.`);
-				while (row.length < 5){
-					row.push('');
+				if (row.length >= 5){
+					if (row.length > 5){
+						row = row.slice(0,5);
+					}
+					if (!row.includes('')) out.push(row);
 				}
-				if (row.length > 5){
-					row = row.slice(0,5);
-				}
-				out.push(row);
 			} else out.push(match);
 		}
+		out = out.filter((row,i) => {
+			for (var p of out.slice(0,i)){
+				if (this.rowsEqual(p,row)) return false;
+			}
+			return true;
+		});
 		return out;
 	},
 	
 	expandString: function(str, table){
-		return this.sanitizeSet(str.trim().split(' ').filter(p => !p.match(/[Oo][Rr]/g)).map(p => p.replace(/[^a-zA-Z\/'.]/, '').toLowerCase().split('/')), table);
+		return this.sanitizeSet(str.trim().split(' ').map(p => p.replace(/[^a-zA-Z\/'.]/, '').toLowerCase().split('/')), table);
 	},
 	
 	// wrap a value <x> in an array if it is not already in one.
@@ -225,8 +228,14 @@ class Pronouns {
 			return util.expandString(input, table); // passed a string, most common case.
 		}
 		else if (typeof input === "object"){
-			if (input.pronouns && Array.isArray(input.pronouns)) return util.sanitizeSet(input.pronouns, table); // passed a pronouns-like object.
-			else if (Array.isArray(input)) return util.sanitizeSet(input, table); // passed an array representing some pronouns.
+			if (Array.isArray(input.pronouns)){ // passed a Pronouns-like object.
+				if (input.any) this.any = input.any;
+				return util.sanitizeSet(input.pronouns, table);
+			}
+			else if (Array.isArray(input)){ // passed an array representing some pronouns.
+				if (!this.hasOwnProperty('any') || !this.any) this.any = input.flat().some(p => p.match(/(\b(any(thing)?|all)\b|\*)/));
+				return util.sanitizeSet(input, table);
+			}
 		}
 		if (logging) console.warn("Unrecognized input. Defaulting to they/them.");
 		return util.tableLookup(['they'], table);
@@ -302,9 +311,8 @@ class Pronouns {
 	}
 }
 
-module.exports = (input, log) => {
-	logging = !!log; // convert it to a boolean value
-	util.logging = logging;
+module.exports = (input, options) => {
+	logging = util.logging = (typeof options === "object" && options.hasOwnProperty('log')) ? !!options.log : logging;
 	return new Pronouns(input);
 }
 module.exports.complete = (input) => {
@@ -314,8 +322,8 @@ module.exports.complete = (input) => {
 	// Generate list of matching rows
 	var matches = [];
 	if (last.length == 0){
-		matches = table.slice(); // Clones the table so it doesn't get changed
-		if (!rest.match(/[Oo][Rr]\s$/g)) matches.unshift(['or']);
+		matches = table.slice(); // Clone the table so it doesn't get changed
+		if (!rest.match(/(^|or|and)\s*?$/)) matches.unshift(['or']);
 	} else {
 		var parts = last.split('/');
 		var end = parts.pop();
