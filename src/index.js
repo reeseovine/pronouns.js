@@ -89,11 +89,12 @@ class Pronouns {
 	
 	add(input){
 		var newRows = this._process(input);
-		for (var i = 0, p; p = newRows[i]; i++){
-			if (!this.pronouns.includes(p)){
-				this.pronouns.push(p);
+		this.pronouns.concat(newRows.filter(row => {
+			for (var p of this.pronouns){
+				if (util.rowsEqual(p,row)) return false;
 			}
-		}
+			return true;
+		}));
 		this.generateExamples();
 	}
 }

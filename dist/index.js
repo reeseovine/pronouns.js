@@ -78,7 +78,7 @@ module.exports = {
 
 	// find the row corresponding to q in table
 	tableLookup: function(q, table){
-		if (q.length > table[0].length) return;
+		if (q.length < 1 || q.length > table[0].length) return;
 		if (q.includes('...')){
 			var queryFront = q.slice(0, q.indexOf('...'));
 			var queryEnd = q.slice(q.indexOf('...')+1);
@@ -143,39 +143,42 @@ module.exports = {
 			if (row.length == 1 && row[0].match(/\b(or|and)\b/)) continue;
 			
 			var match = this.tableLookup(row, table);
-			if (!match){
-				var expansions = [];
-				var badMatch = false;
-				for (var part of row){
-					var match = this.tableLookup([part], table);
-					if (part.match(/(\b(any(thing)?|all)\b|\*)/)){
-						if (this.logging) console.log(`Wildcard detected.`);
-						continue;
-					}
-					if (!match){
-						badMatch = true;
-						break;
-					}
-					else expansions.push(match);
-				}
-				if (!badMatch){
-					out = out.concat(expansions);
-					continue;
-				}
-				
-				if (row.some(p => p.match(/(\b(any(thing)?|all)\b|\*)/))){
+			if (match){
+				out.push(match);
+				continue;
+			}
+		
+			var expansions = [];
+			var badMatch = false;
+			for (var part of row){
+				var match = this.tableLookup([part], table);
+				if (part.match(/(\b(any(thing)?|all)\b|\*)/)){
 					if (this.logging) console.log(`Wildcard detected.`);
 					continue;
 				}
-				
-				if (this.logging) console.warn(`Unrecognized pronoun(s) "${row.join('/')}". This may lead to unexpected behavior.`);
-				if (row.length >= 5){
-					if (row.length > 5){
-						row = row.slice(0,5);
-					}
-					if (!row.includes('')) out.push(row);
+				if (!match){
+					badMatch = true;
+					break;
 				}
-			} else out.push(match);
+				expansions.push(match);
+			}
+			if (!badMatch){
+				out = out.concat(expansions);
+				continue;
+			}
+			
+			if (row.some(p => p.match(/(\b(any(thing)?|all)\b|\*)/))){
+				if (this.logging) console.log(`Wildcard detected.`);
+				continue;
+			}
+			
+			if (this.logging) console.warn(`Unrecognized pronoun(s) "${row.join('/')}". This may lead to unexpected behavior.`);
+			if (row.length >= 5){
+				if (row.length > 5){
+					row = row.slice(0,5);
+				}
+				if (!row.includes('')) out.push(row);
+			}
 		}
 		out = out.filter((row,i) => {
 			for (var p of out.slice(0,i)){
@@ -302,11 +305,12 @@ class Pronouns {
 	
 	add(input){
 		var newRows = this._process(input);
-		for (var i = 0, p; p = newRows[i]; i++){
-			if (!this.pronouns.includes(p)){
-				this.pronouns.push(p);
+		this.pronouns.concat(newRows.filter(row => {
+			for (var p of this.pronouns){
+				if (util.rowsEqual(p,row)) return false;
 			}
-		}
+			return true;
+		}));
 		this.generateExamples();
 	}
 }
