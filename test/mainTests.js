@@ -1,7 +1,7 @@
 const assert = require('assert');
 const pronouns = require('../src/index');
 
-(function() {
+(function(){
 	/* Basic usage */
 	const sample1_String = "she/her or they/them";
 	const sample1_Obj = pronouns(sample1_String);
@@ -79,7 +79,7 @@ const pronouns = require('../src/index');
 	assert.deepStrictEqual( sample2_Obj.ref, sample2_Array[0][4] );
 	assert.deepStrictEqual( sample2_Obj.examples, sample2_examples );
 	assert.strictEqual( sample2_Obj.toString(), sample2_toString );
-	assert.strictEqual( sample2_Obj+"", sample2_toString );
+	assert.strictEqual( `${sample2_Obj}`, sample2_toString );
 	assert.strictEqual( sample2_Obj.toUrl(), sample2_URL );
 	assert.strictEqual( sample2_Obj.any, false );
 	

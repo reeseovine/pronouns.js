@@ -43,7 +43,7 @@
 			<div class="form-group">
 				<label for="pronouns">What are your pronouns?</label>
 				<input class="form-control" id="pronouns" type="text" aria-describedby="pronounHelp" autocomplete="off" autofocus>
-				<small id="pronounHelp" class="form-text text-muted">For example: she/her or they/them</small>
+				<small id="pronounHelp" class="form-text text-muted">For example: she/her or they/them. <a href="https://github.com/katacarbix/pronouns.js/wiki/Format-guide" target="_blank">More info</a></small>
 			</div>
 			
 			<hr>
@@ -81,6 +81,7 @@
 
 $('#pronouns').autoComplete({
 	minLength: 0,
+	noResultsText: '',
 	preventEnter: true,
 	resolver: 'custom',
 	events: {

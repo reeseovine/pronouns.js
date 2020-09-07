@@ -1,6 +1,9 @@
 const util = require('./util');
 const table = require('../resources/pronouns.json');
-var logging = false;
+
+var opts = {
+	log: false
+};
 
 class Pronouns {
 	constructor(input){
@@ -10,21 +13,11 @@ class Pronouns {
 	}
 	
 	_process(input){
-		if (typeof input === "string"){
+		if (typeof input == "string"){
 			if (!this.hasOwnProperty('any') || !this.any) this.any = !!input.match(/(\b(any(thing)?|all)\b|\*)/);
 			return util.expandString(input, table); // passed a string, most common case.
 		}
-		else if (typeof input === "object"){
-			if (Array.isArray(input.pronouns)){ // passed a Pronouns-like object.
-				if (input.any) this.any = input.any;
-				return util.sanitizeSet(input.pronouns, table);
-			}
-			else if (Array.isArray(input)){ // passed an array representing some pronouns.
-				if (!this.hasOwnProperty('any') || !this.any) this.any = input.flat().some(p => p.match(/(\b(any(thing)?|all)\b|\*)/));
-				return util.sanitizeSet(input, table);
-			}
-		}
-		if (logging) console.warn("Unrecognized input. Defaulting to they/them.");
+		if (opts.log) console.warn("Unrecognized input. Defaulting to they/them.");
 		return util.tableLookup(['they'], table);
 	}
 	
@@ -89,9 +82,9 @@ class Pronouns {
 	
 	add(input){
 		var newRows = this._process(input);
-		this.pronouns.concat(newRows.filter(row => {
-			for (var p of this.pronouns){
-				if (util.rowsEqual(p,row)) return false;
+		this.pronouns = this.pronouns.concat(newRows.filter(p1 => {
+			for (var p2 of this.pronouns){
+				if (util.rowsEqual(p2,p1)) return false;
 			}
 			return true;
 		}));
@@ -100,8 +93,15 @@ class Pronouns {
 }
 
 module.exports = (input, options) => {
-	logging = util.logging = (typeof options === "object" && options.hasOwnProperty('log')) ? !!options.log : logging;
-	return new Pronouns(input);
+	var p;
+	
+	if (typeof input == "string") p = new Pronouns(input);
+	else if (typeof input == "object" && !!options) options = input;
+	
+	if (typeof options == "object") opts = {...opts, ...options};
+	util.options = opts;
+	
+	return p;
 }
 module.exports.complete = (input) => {
 	var rest = input.substring(0, input.lastIndexOf(' ') + 1).replace(/\s+/g, ' ');
@@ -129,7 +129,7 @@ module.exports.complete = (input) => {
 		return true;
 	});
 	
-	if (logging && matches.length == 0) console.log(`No matches for ${input} found.`);
+	if (opts.log && matches.length == 0) console.log(`No matches for ${input} found.`);
 	
 	return matches.map(row => rest + util.shortestUnambiguousPath(table, row).join('/'));
 }

@@ -1,6 +1,8 @@
 module.exports = {
-	// logging turned off by default.
-	logging: false,
+	// options object overwritten by index.js.
+	opts: {
+		log: false
+	},
 	
 	// filter table to the rows which begin with q
 	tableFrontFilter: function(q, table){
@@ -19,9 +21,12 @@ module.exports = {
 		});
 	},
 	
+	// filter table using the walkRow function
 	tableWalkFilter: function(q, table){
 		return table.filter(row => this.walkRow(q, row, 0,0));
 	},
+	
+	// match query to row by walking each element along it
 	walkRow: function(q, row, q_i, row_i){
 		if (q[q_i] != row[row_i]){
 			if (row_i >= row.length-(q.length-q_i)) return false;
@@ -108,7 +113,7 @@ module.exports = {
 			for (var part of row){
 				var match = this.tableLookup([part], table);
 				if (part.match(/(\b(any(thing)?|all)\b|\*)/)){
-					if (this.logging) console.log(`Wildcard detected.`);
+					if (this.opts.log) console.log(`Wildcard detected.`);
 					continue;
 				}
 				if (!match){
@@ -123,11 +128,11 @@ module.exports = {
 			}
 			
 			if (row.some(p => p.match(/(\b(any(thing)?|all)\b|\*)/))){
-				if (this.logging) console.log(`Wildcard detected.`);
+				if (this.opts.log) console.log(`Wildcard detected.`);
 				continue;
 			}
 			
-			if (this.logging) console.warn(`Unrecognized pronoun(s) "${row.join('/')}". This may lead to unexpected behavior.`);
+			if (this.opts.log) console.warn(`Unrecognized pronoun(s) "${row.join('/')}". This may lead to unexpected behavior.`);
 			if (row.length >= 5){
 				if (row.length > 5){
 					row = row.slice(0,5);
