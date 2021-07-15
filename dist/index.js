@@ -44,8 +44,10 @@ module.exports=[
 
 },{}],2:[function(require,module,exports){
 module.exports = {
-	// logging turned off by default.
-	logging: false,
+	// options object overwritten by index.js.
+	opts: {
+		log: false
+	},
 	
 	// filter table to the rows which begin with q
 	tableFrontFilter: function(q, table){
@@ -64,9 +66,12 @@ module.exports = {
 		});
 	},
 	
+	// filter table using the walkRow function
 	tableWalkFilter: function(q, table){
 		return table.filter(row => this.walkRow(q, row, 0,0));
 	},
+	
+	// match query to row by walking each element along it
 	walkRow: function(q, row, q_i, row_i){
 		if (q[q_i] != row[row_i]){
 			if (row_i >= row.length-(q.length-q_i)) return false;
@@ -153,7 +158,7 @@ module.exports = {
 			for (var part of row){
 				var match = this.tableLookup([part], table);
 				if (part.match(/(\b(any(thing)?|all)\b|\*)/)){
-					if (this.logging) console.log(`Wildcard detected.`);
+					if (this.opts.log) console.log(`Wildcard detected.`);
 					continue;
 				}
 				if (!match){
@@ -168,11 +173,11 @@ module.exports = {
 			}
 			
 			if (row.some(p => p.match(/(\b(any(thing)?|all)\b|\*)/))){
-				if (this.logging) console.log(`Wildcard detected.`);
+				if (this.opts.log) console.log(`Wildcard detected.`);
 				continue;
 			}
 			
-			if (this.logging) console.warn(`Unrecognized pronoun(s) "${row.join('/')}". This may lead to unexpected behavior.`);
+			if (this.opts.log) console.warn(`Unrecognized pronoun(s) "${row.join('/')}". This may lead to unexpected behavior.`);
 			if (row.length >= 5){
 				if (row.length > 5){
 					row = row.slice(0,5);
@@ -216,7 +221,10 @@ module.exports = {
 },{}],3:[function(require,module,exports){
 const util = require('./util');
 const table = require('../resources/pronouns.json');
-var logging = false;
+
+var opts = {
+	log: false
+};
 
 class Pronouns {
 	constructor(input){
@@ -226,21 +234,11 @@ class Pronouns {
 	}
 	
 	_process(input){
-		if (typeof input === "string"){
+		if (typeof input == "string"){
 			if (!this.hasOwnProperty('any') || !this.any) this.any = !!input.match(/(\b(any(thing)?|all)\b|\*)/);
 			return util.expandString(input, table); // passed a string, most common case.
 		}
-		else if (typeof input === "object"){
-			if (Array.isArray(input.pronouns)){ // passed a Pronouns-like object.
-				if (input.any) this.any = input.any;
-				return util.sanitizeSet(input.pronouns, table);
-			}
-			else if (Array.isArray(input)){ // passed an array representing some pronouns.
-				if (!this.hasOwnProperty('any') || !this.any) this.any = input.flat().some(p => p.match(/(\b(any(thing)?|all)\b|\*)/));
-				return util.sanitizeSet(input, table);
-			}
-		}
-		if (logging) console.warn("Unrecognized input. Defaulting to they/them.");
+		if (opts.log) console.warn("Unrecognized input. Defaulting to they/them.");
 		return util.tableLookup(['they'], table);
 	}
 	
@@ -305,9 +303,9 @@ class Pronouns {
 	
 	add(input){
 		var newRows = this._process(input);
-		this.pronouns.concat(newRows.filter(row => {
-			for (var p of this.pronouns){
-				if (util.rowsEqual(p,row)) return false;
+		this.pronouns = this.pronouns.concat(newRows.filter(p1 => {
+			for (var p2 of this.pronouns){
+				if (util.rowsEqual(p2,p1)) return false;
 			}
 			return true;
 		}));
@@ -316,24 +314,41 @@ class Pronouns {
 }
 
 module.exports = (input, options) => {
-	logging = util.logging = (typeof options === "object" && options.hasOwnProperty('log')) ? !!options.log : logging;
-	return new Pronouns(input);
+	var p;
+	
+	if (typeof input == "string") p = new Pronouns(input);
+	else if (typeof input == "object" && !!options) options = input;
+	
+	if (typeof options == "object") opts = {...opts, ...options};
+	util.options = opts;
+	
+	return p;
 }
 module.exports.complete = (input) => {
-	var rest = input.substring(0, input.lastIndexOf(' ') + 1).replace(/\s+/g, ' ');
-	var last = input.substring(input.lastIndexOf(' ') + 1, input.length);
+	var sepIndex = input.lastIndexOf(' ') + 1;
+	var rest = input.substring(0, sepIndex).replace(/\s+/g, ' ');
+	var last = input.substring(sepIndex, input.length);
 	
 	// Generate list of matching rows
 	var matches = [];
 	if (last.length == 0){
-		matches = table.slice(); // Clone the table so it doesn't get changed
-		if (!rest.match(/(^|or|and)\s*?$/)) matches.unshift(['or']);
+		matches = [...table]; // Clone the table so it doesn't get changed
 	} else {
 		var parts = last.split('/');
 		var end = parts.pop();
-		matches = util.tableFrontFilter(parts, table);
-		matches = matches.filter(row => row[parts.length].substring(0, end.length) === end);
-		if (last.match(/^[Oo][Rr]?$/g)) matches.unshift(['or']);
+		console.dir(parts);
+		console.log(end);
+		matches = util.tableWalkFilter(parts, table).filter(row => {
+			for (var f of row.slice(parts.length, row.length)){
+				if (end.length <= f.length && f.substring(0,end.length) === end) return true;
+			}
+			return false;
+		});
+		if (matches.length == 0){
+			rest += parts.slice(0,parts.length-1).join('/')+'/';
+			matches = table.filter(row => row.length == 1);
+		}
+		console.dir(matches);
 	}
 	
 	// Filter matches to those which are not already in rest of input
@@ -345,7 +360,7 @@ module.exports.complete = (input) => {
 		return true;
 	});
 	
-	if (logging && matches.length == 0) console.log(`No matches for ${input} found.`);
+	if (opts.log && matches.length == 0) console.log(`No matches for ${input} found.`);
 	
 	return matches.map(row => rest + util.shortestUnambiguousPath(table, row).join('/'));
 }

@@ -2,7 +2,8 @@ const util = require('./util');
 const table = require('../resources/pronouns.json');
 
 var opts = {
-	log: false
+	log: false,
+	default: "they/them"
 };
 
 class Pronouns {
@@ -17,13 +18,13 @@ class Pronouns {
 			if (!this.hasOwnProperty('any') || !this.any) this.any = !!input.match(/(\b(any(thing)?|all)\b|\*)/);
 			return util.expandString(input, table); // passed a string, most common case.
 		}
-		if (opts.log) console.warn("Unrecognized input. Defaulting to they/them.");
-		return util.tableLookup(['they'], table);
+		if (opts.log) console.warn(`Unrecognized input. Defaulting to ${opts.default}.`);
+		return util.expandString(opts.default, table);
 	}
 	
 	generateForms(i){
 		i = Number.isInteger(parseInt(i)) ? parseInt(i) : 0;
-		var p = (this.pronouns && this.pronouns.length > 0) ? this.pronouns[i] : util.tableLookup(['they'], table);
+		var p = (this.pronouns && this.pronouns.length > 0) ? this.pronouns[i] : util.expandString(opts.default, table);
 		
 		// the 5 main pronoun types
 		this.subject = p[0];
@@ -45,7 +46,7 @@ class Pronouns {
 		this.examples_html = [];
 		this.examples_md = [];
 		var i = 0;
-		var p = (i < this.pronouns.length) ? this.pronouns[i] : util.tableLookup(['they'], table);
+		var p = (i < this.pronouns.length) ? this.pronouns[i] : util.expandString(opts.default, table);
 		do {
 			this.examples.push([
 				util.capitalize(`${p[0]} went to the park.`),
@@ -104,20 +105,30 @@ module.exports = (input, options) => {
 	return p;
 }
 module.exports.complete = (input) => {
-	var rest = input.substring(0, input.lastIndexOf(' ') + 1).replace(/\s+/g, ' ');
-	var last = input.substring(input.lastIndexOf(' ') + 1, input.length);
+	var sepIndex = input.lastIndexOf(' ') + 1;
+	var rest = input.substring(0, sepIndex).replace(/\s+/g, ' ');
+	var last = input.substring(sepIndex, input.length);
 	
 	// Generate list of matching rows
 	var matches = [];
 	if (last.length == 0){
-		matches = table.slice(); // Clone the table so it doesn't get changed
-		if (!rest.match(/(^|or|and)\s*?$/)) matches.unshift(['or']);
+		matches = [...table]; // Clone the table so it doesn't get changed
 	} else {
 		var parts = last.split('/');
 		var end = parts.pop();
-		matches = util.tableFrontFilter(parts, table);
-		matches = matches.filter(row => row[parts.length].substring(0, end.length) === end);
-		if (last.match(/^[Oo][Rr]?$/g)) matches.unshift(['or']);
+		console.dir(parts);
+		console.log(end);
+		matches = util.tableWalkFilter(parts, table).filter(row => {
+			for (var f of row.slice(parts.length, row.length)){
+				if (end.length <= f.length && f.substring(0,end.length) === end) return true;
+			}
+			return false;
+		});
+		if (matches.length == 0){
+			rest += parts.slice(0,parts.length-1).join('/')+'/';
+			matches = table.filter(row => row.length == 1);
+		}
+		console.dir(matches);
 	}
 	
 	// Filter matches to those which are not already in rest of input

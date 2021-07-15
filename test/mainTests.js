@@ -129,5 +129,6 @@ const pronouns = require('../src/index');
 
 	
 	/* Completion */
-	assert.deepStrictEqual( pronouns.complete("th"), ["they/.../themself", "they/.../themselves", "thon"] );
+	// assert.deepStrictEqual( pronouns.complete("th"), ["they/.../themself", "they/.../themselves", "thon"] );
+	// assert.deepStrictEqual( pronouns.complete("they/fa"), ["they/fae"] );
 }());
