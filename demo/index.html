@@ -2,23 +2,32 @@
 <html lang="en" dir="ltr">
 <head>
 	<title>pronouns.js demo</title>
+	
+	<!-- Meta -->
 	<meta charset="utf-8">
 	<meta name="description" content="Enter your pronouns and watch as forms and examples are automatically generated.">
-	<meta name="robots" content="noindex, nofollow">
-
-	<!--Let browser know website is optimized for mobile-->
+	<meta name="robots" content="noarchive">
+	<meta name="theme-color" content="#e83e8c">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	
-	<!-- Compiled and minified CSS -->
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-	<!-- Font Awesome icon font -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/brands.min.css" integrity="sha512-AMDXrE+qaoUHsd0DXQJr5dL4m5xmpkGLxXZQik2TvR2VCVKT/XRPQ4e/LTnwl84mCv+eFm92UG6ErWDtGM/Q5Q==" crossorigin="anonymous" />
+	<!-- Social media cards -->
+	<meta property="og:title" content="pronouns.js">
+	<meta property="og:description" content="Enter your pronouns and watch as forms and examples are automatically generated.">
+	<meta property="og:image" content="thumbnail.png">
+	<meta property="og:url" content="https://katacarbix.github.io/pronouns.js/demo/">
 	
-	<!-- Compiled and minified JavaScript -->
-	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/gh/xcash/bootstrap-autocomplete@v2.3.5/dist/latest/bootstrap-autocomplete.min.js"></script>
+	<meta name="twitter:title" content="pronouns.js">
+	<meta name="twitter:description" content="Enter your pronouns and watch as forms and examples are automatically generated.">
+	<meta name="twitter:image" content="thumbnail.png">
+	<meta name="twitter:card" content="summary_large_image">
+
+	<!-- Stylesheets -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" integrity="sha256-Ww++W3rXBfapN8SZitAvc9jw2Xb+Ixt0rvDsmWmQyTo=" crossorigin="anonymous">
+	
+	<!-- Scripts -->
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js" integrity="sha256-ecWZ3XYM7AwWIaGvSdmipJ2l1F4bN9RXW6zgpeAiZYI=" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap-autocomplete@2.3.6/dist/latest/bootstrap-autocomplete.min.js" integrity="sha256-45Sn5xV9Nf28PJXGyykcRK7M3fM7oSQwwVI9+FZEAGs=" crossorigin="anonymous"></script>
 </head>
 <body class="d-flex flex-column" style="overflow-y:scroll;min-height:100vh;">
 	<main class="py-3 flex-grow-1 flex-shrink-0">
@@ -34,7 +43,7 @@
 			<div class="form-group">
 				<label for="pronouns">What are your pronouns?</label>
 				<input class="form-control" id="pronouns" type="text" aria-describedby="pronounHelp" autocomplete="off" autofocus>
-				<small id="pronounHelp" class="form-text text-muted">For example: she/her or they/them</small>
+				<small id="pronounHelp" class="form-text text-muted">For example: she/her or they/them. <a href="https://github.com/katacarbix/pronouns.js/wiki/Format-guide" target="_blank">More info</a></small>
 			</div>
 			
 			<hr>
@@ -42,17 +51,8 @@
 			<div class="row overflow-auto">
 				<div class="col">
 					<table class="table table-bordered">
-						<thead class="thead-light">
-							<tr>
-								<th scope="col">Subject</th>
-								<th scope="col">Object</th>
-								<th scope="col">Determiner</th>
-								<th scope="col">Possessive</th>
-								<th scope="col">Reflexive</th>
-							</tr>
-						</thead>
-						<tbody>
-						</tbody>
+						<thead class="thead-light"></thead>
+						<tbody></tbody>
 					</table>
 				</div>
 			</div>
@@ -72,7 +72,7 @@
 	<footer class="bg-light border-top" style="">
 		<div class="container py-3 text-muted small">
 			Written with ❤ by <a href="https://github.com/katacarbix" target="_blank">Reese Jacobson</a>, whose <a href="https://pronoun.is/they/.../themself" target="_blank">pronoun.is/they</a>.<br>
-			Pronouns.js is a fork of <a href="https://github.com/witch-house/pronoun.is" target="_blank">pronoun.is</a> and is free software under the <a href="https://github.com/katacarbix/pronouns.js/blob/master/LICENSE" target="_blank">AGPLv3</a>.
+			Pronouns.js is a fork of <a href="https://github.com/witch-house/pronoun.is" target="_blank">Pronoun Island</a> and is free software under the <a href="https://github.com/katacarbix/pronouns.js/blob/master/LICENSE" target="_blank">AGPLv3</a>.
 		</div>
     </footer>
 	
@@ -81,6 +81,7 @@
 
 $('#pronouns').autoComplete({
 	minLength: 0,
+	noResultsText: '',
 	preventEnter: true,
 	resolver: 'custom',
 	events: {
@@ -92,28 +93,44 @@ $('#pronouns').autoComplete({
 });
 
 $('#pronouns').on('input autocomplete.select', function(){
-	var p = pronouns(this.value);
+	var p = pronouns(this.value, {log:false});
 	var rows = ``;
 	var examples = ``;
+	var url = p.toUrl();
+	
+	if (p.pronouns.length > 0) $('thead').html(`
+		<tr>
+			<th scope="col">Subject</th>
+			<th scope="col">Object</th>
+			<th scope="col">Determiner</th>
+			<th scope="col">Possessive</th>
+			<th scope="col">Reflexive</th>
+		</tr>`);
+	else $('thead').html(``);
+	
+	if (p.any) examples += `
+		<li class="list-group-item overflow-auto">
+			Any pronouns are acceptable.
+		</li>`;
 	for (var i = 0, row; row = p.pronouns[i]; i++){
-		if (!pronouns.util.rowsEqual(row,['','','','',''])){
-			rows += `
-				<tr>
-					<td scope="row">${row[0]}</td>
-					<td>${row[1]}</td>
-					<td>${row[2]}</td>
-					<td>${row[3]}</td>
-					<td>${row[4]}</td>
-				</tr>`;
-			if (!row.includes('')) examples += `
-				<li class="list-group-item overflow-auto">
-					${p.examples[i].join('<br>').replace(/\*(\w+)\*/g, "<strong>$1</strong>")}
-				</li>`;
-		}
+		rows += `
+			<tr>
+				<td scope="row">${row[0]}</td>
+				<td>${row[1]}</td>
+				<td>${row[2]}</td>
+				<td>${row[3]}</td>
+				<td>${row[4]}</td>
+			</tr>`;
+		examples += `
+			<li class="list-group-item overflow-auto">
+				${p.examples_html[i].join('<br>')}
+			</li>`;
 	}
+	
 	$('tbody').html(rows);
 	$('#examples').html(examples);
-	$('#pronoun-island-link').html(`<a href="${p.toUrl()}" target="_blank" class="btn btn-outline-primary">${p.toUrl()}</a>`);
+	if (url.length > 19) $('#pronoun-island-link').html(`<a href="${url}" target="_blank" class="btn btn-outline-primary">${url}</a>`);
+	else $('#pronoun-island-link').html(``);
 });
 	
 	</script>

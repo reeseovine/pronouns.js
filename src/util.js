@@ -1,10 +1,11 @@
 module.exports = {
-	// logging turned off by default.
-	logging: false,
+	// options object overwritten by index.js.
+	opts: {
+		log: false
+	},
 	
 	// filter table to the rows which begin with q
 	tableFrontFilter: function(q, table){
-		var qlen = q.length;
 		return table.filter(row => this.rowsEqual(q, row) );
 	},
 	
@@ -19,16 +20,32 @@ module.exports = {
 			return true;
 		});
 	},
+	
+	// filter table using the walkRow function
+	tableWalkFilter: function(q, table){
+		return table.filter(row => this.walkRow(q, row, 0,0));
+	},
+	
+	// match query to row by walking each element along it
+	walkRow: function(q, row, q_i, row_i){
+		if (q[q_i] != row[row_i]){
+			if (row_i >= row.length-(q.length-q_i)) return false;
+			return this.walkRow(q, row, q_i, row_i+1);
+		}
+		if (q_i < q.length-1) return this.walkRow(q, row, q_i+1, row_i+1);
+		return true;
+	},
 
 	// find the row corresponding to q in table
 	tableLookup: function(q, table){
+		if (q.length < 1 || q.length > table[0].length) return;
 		if (q.includes('...')){
 			var queryFront = q.slice(0, q.indexOf('...'));
 			var queryEnd = q.slice(q.indexOf('...')+1);
 			var frontMatches = this.tableFrontFilter(queryFront, table);
 			return this.tableEndFilter(queryEnd, frontMatches)[0];
 		}
-		return this.tableFrontFilter(q, table)[0];
+		return this.tableWalkFilter(q, table)[0];
 	},
 	
 	// Compute the shortest (in number of path elements) forward path which
@@ -80,23 +97,60 @@ module.exports = {
 	},
 	
 	sanitizeSet: function(p, table){
-		return p.map(row => {
+		var out = [];
+		for (var row of p){
+			if (row.length < 1) continue;
+			if (row.length == 1 && row[0].match(/\b(or|and)\b/)) continue;
+			
 			var match = this.tableLookup(row, table);
-			if (!match){
-				if (this.logging) console.warn(`Unrecognized pronoun "${row.join('/')}". This may lead to unexpected behavior.`);
-				while (row.length < 5){
-					row.push('');
+			if (match){
+				out.push(match);
+				continue;
+			}
+		
+			var expansions = [];
+			var badMatch = false;
+			for (var part of row){
+				var match = this.tableLookup([part], table);
+				if (part.match(/(\b(any(thing)?|all)\b|\*)/)){
+					if (this.opts.log) console.log(`Wildcard detected.`);
+					continue;
 				}
+				if (!match){
+					badMatch = true;
+					break;
+				}
+				expansions.push(match);
+			}
+			if (!badMatch){
+				out = out.concat(expansions);
+				continue;
+			}
+			
+			if (row.some(p => p.match(/(\b(any(thing)?|all)\b|\*)/))){
+				if (this.opts.log) console.log(`Wildcard detected.`);
+				continue;
+			}
+			
+			if (this.opts.log) console.warn(`Unrecognized pronoun(s) "${row.join('/')}". This may lead to unexpected behavior.`);
+			if (row.length >= 5){
 				if (row.length > 5){
 					row = row.slice(0,5);
 				}
-				return row;
-			} else return match;
+				if (!row.includes('')) out.push(row);
+			}
+		}
+		out = out.filter((row,i) => {
+			for (var p of out.slice(0,i)){
+				if (this.rowsEqual(p,row)) return false;
+			}
+			return true;
 		});
+		return out;
 	},
 	
 	expandString: function(str, table){
-		return this.sanitizeSet(str.split(' ').filter(p => !p.match(/[Oo][Rr]/g)).map(p => p.replace(/[^a-zA-Z\/'.]/, '').toLowerCase().split('/')), table);
+		return this.sanitizeSet(str.trim().split(' ').map(p => p.replace(/[^a-zA-Z\/'.]/, '').toLowerCase().split('/')), table);
 	},
 	
 	// wrap a value <x> in an array if it is not already in one.
@@ -107,7 +161,7 @@ module.exports = {
 	
 	// capitalize first letter of a given string
 	capitalize: function(str){
-		return str.replace(/[a-zA-Z]/, m => m.toUpperCase());
+		return str.replace(/[a-zA-Z]/, l => l.toUpperCase());
 	},
 	
 	// check if two arrays are similar. will permit array b to be longer by design.

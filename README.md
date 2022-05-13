@@ -4,7 +4,7 @@ personal pronoun helper module. fork of [pronoun.is](https://github.com/witch-ho
 
 `pronouns.js` aims to be an easy way to handle numerous personal pronouns in English. It remains open-ended to allow for myriad use cases. One possible application could be in a social media service in which users can add their pronoun(s) and the interface can refer to them properly.
 
-Play the demo [here](https://katacarbix.github.io/pronouns.js/demo/index.html).
+Check out the demo [here](https://katacarbix.github.io/pronouns.js/demo/index.html).
 
 ## Basic usage
 
@@ -44,14 +44,9 @@ they   | them | their               | theirs           | themself
 
 **`index.js`** is the main program. `pronouns` is both a function you can call with a string parameter, and an object with references to the table and a few methods.
 
-All of the following are valid inputs to the `pronouns` function:
-
-* she
-* he/him
-* ze/hir or they/.../themselves
-* she/her, they/them, it/its, or sie/hir
-
 **`util.js`** has most of what was translated from the original Clojure code. These functions are mostly meant for accessing rows in a table or formatting strings and is not needed for typical users, but is exposed nonetheless as `pronouns.util`.
+
+For further documentation, check out [the wiki](https://github.com/katacarbix/pronouns.js/wiki).
 
 ## Tests
 
@@ -60,13 +55,3 @@ The `test/` directory contains unit tests for `index.js` and `util.js`. Please r
 ## Contributing
 
 Issues and pull/merge requests regarding the code are very much welcome! If you would like to request pronouns to be added to the table there is an issue template for doing so. You should also consider doing the same with the original repository.
-
-## To do
-
-* ~~Autocomplete!~~
-* ~~Interactive demos and examples~~
-* Parse even shorter multi-pronoun inputs like "they/she" or "she/him"
-* Handle "any/all", unknown, or badly formatted inputs better
-	* Should default to they/them
-* Allow modifying an existing object (how would that work?)
-* More comprehensive documentation
