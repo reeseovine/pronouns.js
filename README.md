@@ -4,7 +4,7 @@ personal pronoun helper module. fork of [pronoun.is](https://github.com/witch-ho
 
 `pronouns.js` aims to be an easy way to handle numerous personal pronouns in English. It remains open-ended to allow for myriad use cases. One possible application could be in a social media service in which users can add their pronoun(s) and the interface can refer to them properly.
 
-Play the demo [here](https://katacarbix.github.io/pronouns.js/demo/index.html).
+Play the demo [here](https://reeseovine.github.io/pronouns.js/demo/index.html).
 
 ## Basic usage
 
